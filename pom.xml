@@ -7,7 +7,17 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jira_lims_scripts</groupId>
     <artifactId>jira_lims_scripts</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.4</version>
+
+    <!-- Output to jar format -->
+    <packaging>jar</packaging>
+
+    <!-- Properties - versions of dependencies to use -->
+    <properties>
+        <jira.version>7.0.5</jira.version>
+        <groovy.version>2.4.6</groovy.version>
+        <amps.version>6.2.4</amps.version>
+    </properties>
 
     <organization>
         <name>Wellcome Trust Sanger Institute</name>
@@ -22,51 +32,145 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <!--<repository>-->
+            <!--<id>local_maven_repository</id>-->
+            <!--<url>file://usr/share/atlassian-plugin-sdk-6.2.6/repository</url>-->
+        <!--</repository>-->
     </repositories>
 
     <build>
-        <sourceDirectory>src/main/groovy</sourceDirectory>
-        <testSourceDirectory>src/test/groovy</testSourceDirectory>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <!--<directory>${project.basedir}/target</directory>-->
+        <directory>/opt/atlassian/application-data/jira/scripts</directory>
+        <outputDirectory>${project.build.directory}</outputDirectory>
+        <testOutputDirectory>${project.build.directory}</testOutputDirectory>
+        <sourceDirectory>${project.basedir}/src/main/groovy</sourceDirectory>
+        <!--<scriptSourceDirectory>${project.basedir}/src/main/scripts</scriptSourceDirectory>-->
+        <testSourceDirectory>${project.basedir}/src/test/groovy</testSourceDirectory>
         <resources>
             <resource>
-                <directory>src/main/groovy</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/groovy</directory>
             </resource>
         </resources>
         <testResources>
             <testResource>
-                <directory>src/test/groovy</directory>
+                <directory>${project.basedir}/src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>${project.basedir}/src/test/groovy</directory>
             </testResource>
         </testResources>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-compiler-plugin</artifactId>-->
+                <!--&lt;!&ndash; TODO: why cannot use latest version 3.5.1? &ndash;&gt;-->
+                <!--<version>3.5.1</version>-->
+                <!--<configuration>-->
+                    <!--<source>1.8</source>-->
+                    <!--<target>1.8</target>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>${gmavenplus.version}</version>
+                <version>1.5</version>
                 <executions>
                     <execution>
                         <goals>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <!--<goal>generateStubs</goal>-->
                             <goal>compile</goal>
+                            <!--<goal>testGenerateStubs</goal>-->
                             <goal>testCompile</goal>
+                            <!--<goal>removeStubs</goal>-->
+                            <!--<goal>removeTestStubs</goal>-->
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
+                <version>2.19.1</version>
                 <configuration>
-                    <environmentVariables>
-                        <containerServiceUrl>fakeContainerUrl</containerServiceUrl>
-                        <materialServiceUrl>fakeMaterialUrl</materialServiceUrl>
-                    </environmentVariables>
+                    <!--<environmentVariables>-->
+                        <!--<containerServiceUrl>fakeContainerUrl</containerServiceUrl>-->
+                        <!--<materialServiceUrl>fakeMaterialUrl</materialServiceUrl>-->
+                    <!--</environmentVariables>-->
                 </configuration>
             </plugin>
+
+            <!-- dependency plugin can copy all dependency jars into target lib-->
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>install</phase>
+                        <goals>
+                            <!-- copy copies the jars to the outputDir, unpack extracts them into there -->
+                            <!--<goal>copy-dependencies</goal>-->
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>/opt/atlassian/application-data/jira/scripts</outputDirectory>
+                            <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
+                            <!--<outputDirectory>/opt/atlassian/jira/atlassian-jira/WEB-INF/lib/</outputDirectory>-->
+                            <!-- to restrict to just those dependencies required at runtime include scope -->
+                            <!-- runtime and exclude scope provided -->
+                            <includeScope>runtime</includeScope>
+                            <excludeScope>provided</excludeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-shade-plugin</artifactId>-->
+                <!--<version>2.4.3</version>-->
+                <!--<configuration>-->
+                    <!--<finalName>${project.build.finalName}</finalName>-->
+                    <!--&lt;!&ndash; shadedArtifactAttached is set true to get full uber jar in output dir&ndash;&gt;-->
+                    <!--<shadedArtifactAttached>true</shadedArtifactAttached>-->
+                    <!--<outputDirectory>/opt/atlassian/application-data/jira/scripts</outputDirectory>-->
+                    <!--&lt;!&ndash;<outputDirectory>/opt/atlassian/jira/atlassian-jira/WEB-INF/lib/</outputDirectory>&ndash;&gt;-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>shade</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
     <dependencies>
-
         <!-- For Jira API libraries -->
         <dependency>
             <groupId>com.atlassian.jira</groupId>
@@ -75,12 +179,18 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- For Jira core libraries -->
+        <!-- For Jira core libraries - N.B. need to exclude slf4j-log4j12 due to conflict -->
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-core</artifactId>
             <version>${jira.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- For Groovy language -->
@@ -88,58 +198,115 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>${groovy.version}</version>
+            <scope>compile</scope>
         </dependency>
+
+        <!-- scriptrunner dependency - Adding this gives Groovyc NoClassDefFoundError
+         for org/apache/mavenartifact/versioning/ArtifactVersion-->
+        <!--<dependency>-->
+            <!--<groupId>com.onresolve.jira.groovy</groupId>-->
+            <!--<artifactId>groovyrunner</artifactId>-->
+            <!--<version>4.3.4</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
 
         <!-- for http-builder for doing REST communications -->
-        <dependency>
-            <groupId>org.codehaus.groovy.modules.http-builder</groupId>
-            <artifactId>http-builder</artifactId>
-            <version>${httpbuilder.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.codehaus.groovy.modules.http-builder</groupId>-->
+            <!--<artifactId>http-builder</artifactId>-->
+            <!--<version>0.7.1</version>-->
+        <!--</dependency>-->
 
-        <!-- For the Materials/Container services -->
+         <!--For the Materials/Container services-->
         <dependency>
             <groupId>com.github.sanger</groupId>
             <artifactId>jira_integration_scripts</artifactId>
-            <version>${mat_cont_library.version}</version>
+            <version>0.1.4</version>
+            <scope>compile</scope>
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.codehaus.groovy.modules</groupId>-->
+                    <!--<artifactId>http-builder</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.codehaus.groovy</groupId>-->
+                    <!--<artifactId>groovy-all</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.codehaus.groovy</groupId>-->
+                    <!--<artifactId>groovy</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.apache.httpcomponents</groupId>-->
+                    <!--<artifactId>httpclient</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+                    <!--<artifactId>jackson-databind</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>commons-lang</groupId>-->
+                    <!--<artifactId>commons-lang</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>commons-logging</groupId>-->
+                    <!--<artifactId>commons-logging</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>antlr</groupId>-->
+                    <!--<artifactId>antlr</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>commons-beanutils</groupId>-->
+                    <!--<artifactId>commons-beanutils</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
         </dependency>
 
-        <!-- For JUnit testing -->
+        <!--slf4j logging facade for java is abstraction for other logging frameworks e.g. logback, log4j-->
+        <!-- this includes the slf4j-api jar so don't need that separately -->
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>slf4j-log4j12</artifactId>-->
+            <!--<version>1.7.9</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- For SPOCK testing framework under JUnit -->
+        <!-- TODO: required for Jira testing classes -->
+        <!-- For testing using jira MockIssue -->
+        <!--<dependency>-->
+            <!--<groupId>com.atlassian.jira</groupId>-->
+            <!--<artifactId>jira-tests</artifactId>-->
+            <!--<version>6.4.9</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
+        <!-- For SPOCK testing framework under JUnit, includes JUnit -->
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>${spock.version}</version>
-            <scope>test</scope>
+            <!-- TODO: latest is 1.0-groovy-2.0, scriptrunner contains 0.7 -->
+            <version>0.7-groovy-2.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.groovy</groupId>
+                    <artifactId>groovy-all</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
-        <!-- Java byte code generation library for use in testing -->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>${cglib.version}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
-    <properties>
-        <jira.version>7.0.5</jira.version>
-        <groovy.version>2.4.5</groovy.version>
-        <amps.version>6.2.3</amps.version>
-        <gmavenplus.version>1.5</gmavenplus.version>
-        <surefire.version>2.19.1</surefire.version>
-        <httpbuilder.version>0.7.1</httpbuilder.version>
-        <mat_cont_library.version>0.0.3</mat_cont_library.version>
-        <junit.version>4.11</junit.version>
-        <spock.version>1.0-groovy-2.4</spock.version>
-        <cglib.version>2.2</cglib.version>
-    </properties>
 </project>

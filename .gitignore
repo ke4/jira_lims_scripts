@@ -9,5 +9,8 @@
 # Maven
 target/
 
+# configuration
+configs/
+
 # Logs
 logs/
