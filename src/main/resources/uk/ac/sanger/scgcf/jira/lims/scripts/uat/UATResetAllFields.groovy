@@ -1,11 +1,15 @@
+package uk.ac.sanger.scgcf.jira.lims.scripts.uat
+
 import com.atlassian.jira.issue.Issue
 import uk.ac.sanger.scgcf.jira.lims.actions.UATFunctions
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
+import groovy.transform.Field
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-/**
- * Created by as28 on 05/07/16.
- */
+// create logging class
+@Field private final Logger LOG = LoggerFactory.getLogger(getClass())
 
 // get the current issue (from binding)
 Issue curIssue = issue
@@ -13,7 +17,7 @@ Issue curIssue = issue
 // check the issue type and state match those expected, if not return error
 if (curIssue == null) {
     // TODO: error handling
-    log.error "No current issue found, cannot continue"
+    LOG.error "No current issue found, cannot continue"
     return
 }
 
@@ -28,12 +32,12 @@ switch (issueTypeName) {
         break
     default:
         // TODO: error handling
-        log.error "Unrecognised issue type name ${issueTypeName}"
+        LOG.error "Unrecognised issue type name ${issueTypeName}"
         break
 }
 
 void process( Issue curIssue ) {
-    log.error "UAT Processing: Reset All Fields for issue key = ${curIssue.getKey()}"
+    LOG.debug "UAT Processing: Reset All Fields for issue key = ${curIssue.getKey()}"
 
     // fetch field names using aliases
     def fieldNames = [
@@ -54,11 +58,11 @@ void process( Issue curIssue ) {
             ConfigReader.getCFName("UAT_NORM_TUBE_BARCODES"),
             ConfigReader.getCFName("UAT_NORM_TUBE_DETAILS")
     ]
-    log.error fieldNames
+    LOG.debug fieldNames
 
     // clear the custom field value in the issue
     fieldNames.each { curFieldName ->
-        log.error "curFieldName: ${curFieldName}"
+        LOG.debug "curFieldName: ${curFieldName}"
         JiraAPIWrapper.clearCustomFieldValueByName( curIssue, curFieldName )
     }
 }

@@ -1,8 +1,12 @@
-import com.atlassian.jira.issue.Issue
+package uk.ac.sanger.scgcf.jira.lims.scripts.uat
 
-/**
- * Created by as28 on 14/07/16.
- */
+import com.atlassian.jira.issue.Issue
+import groovy.transform.Field
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+// create logging class
+@Field private final Logger LOG = LoggerFactory.getLogger(getClass())
 
 // get the current issue (from binding)
 Issue curIssue = issue
@@ -10,7 +14,7 @@ Issue curIssue = issue
 // check the issue type and state match those expected, if not return error
 if (curIssue == null) {
     // TODO: error handling
-    log.error "No current issue found, cannot continue"
+    LOG.error "No current issue found, cannot continue"
     return
 }
 
@@ -21,21 +25,21 @@ def issueStatusName = curIssue.getStatus().getName()
 switch (issueTypeName) {
     case "Task":
         switch (issueStatusName) {
-            case "UAT Sorted Cell Plates Created":
+            case "UAT Report Created":
                 process( curIssue )
                 break
             default:
                 // TODO: error handling
-                log.error "Unrecognised status name ${issueStatusName}"
+                LOG.error "Unrecognised status name ${issueStatusName}"
                 break
         }
         break
     default:
         // TODO: error handling
-        log.error "Unrecognised issue type name ${issueTypeName}"
+        LOG.error "Unrecognised issue type name ${issueTypeName}"
         break
 }
 
 void process( Issue curIssue ) {
-    log.error "UAT Processing: Combine Sorted Plates"
+    LOG.debug "UAT Processing: Report On Tubes"
 }

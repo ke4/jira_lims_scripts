@@ -26,7 +26,7 @@ class JiraAPIWrapper {
      * @return CustomField object
      */
     static CustomField getCustomFieldByName(String cfName) {
-        LOG.debug("Custom field name: ", cfName)
+        LOG.debug "Custom field name: ${cfName}"
         def customFieldManager = ComponentAccessor.getCustomFieldManager()
         customFieldManager.getCustomFieldObjectByName(cfName)
     }
@@ -39,9 +39,9 @@ class JiraAPIWrapper {
      * TODO: this needs to handle custom fields other than strings
      */
     static String getCustomFieldValueByName(Issue curIssue, String cfName) {
-        LOG.debug("Custom field name: ", cfName)
+        LOG.debug "Custom field name: ${cfName}"
         String cfValue = getCustomFieldByName(cfName).getValue(curIssue) as String
-        LOG.debug("CF value: ", cfValue)
+        LOG.debug("CF value: ${cfValue}")
         cfValue
     }
 
@@ -58,12 +58,12 @@ class JiraAPIWrapper {
 
         // locate the custom field for the current issue
         CustomFieldManager customFieldManager = ComponentAccessor.getCustomFieldManager()
-        LOG.debug "class of customFieldManager = ${customFieldManager.getClass()}"
-        LOG.debug "list of objects:"
-        def cfmList = customFieldManager.getCustomFieldObjects(curIssue)
-        cfmList.eachWithIndex{ CustomField cf, int indx ->
-            LOG.debug "custom field name = ${cf.name}"
-        }
+//        LOG.debug "class of customFieldManager = ${customFieldManager.getClass()}"
+//        LOG.debug "list of objects:"
+//        def cfmList = customFieldManager.getCustomFieldObjects(curIssue)
+//        cfmList.eachWithIndex{ CustomField cf, int indx ->
+//            LOG.debug "custom field name = ${cf.name}"
+//        }
         def tgtField = customFieldManager.getCustomFieldObjects(curIssue).find {it.name == cfName}
 
         // update the value of the field and save the change in the database
@@ -71,7 +71,7 @@ class JiraAPIWrapper {
             def changeHolder = new DefaultIssueChangeHolder()
             tgtField.updateValue(null, curIssue, new ModifiedValue(curIssue.getCustomFieldValue(tgtField), newValue),changeHolder)
         } else {
-            LOG.error("setCustomFieldValueByName: Custom field with name <${cfName}> was not found, cannot set value")
+            LOG.error "setCustomFieldValueByName: Custom field with name <${cfName}> was not found, cannot set value"
         }
     }
 
