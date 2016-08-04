@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jira_lims_scripts</groupId>
     <artifactId>jira_lims_scripts</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 
     <!-- Output to jar format -->
     <packaging>jar</packaging>
@@ -15,7 +15,6 @@
     <!-- Properties - versions of dependencies to use -->
     <properties>
         <jira.version>7.0.5</jira.version>
-        <!--<groovy.version>2.4.6</groovy.version>-->
         <amps.version>6.2.4</amps.version>
     </properties>
 
@@ -213,7 +212,7 @@
             <artifactId>jira_integration_scripts</artifactId>
             <version>0.1.5</version>
             <scope>compile</scope>
-            <!--<exclusions>-->
+            <exclusions>
                 <!--<exclusion>-->
                     <!--<groupId>org.codehaus.groovy.modules</groupId>-->
                     <!--<artifactId>http-builder</artifactId>-->
@@ -221,6 +220,10 @@
                 <!--<exclusion>-->
                     <!--<groupId>org.codehaus.groovy</groupId>-->
                     <!--<artifactId>groovy-all</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>xerces</groupId>-->
+                    <!--<artifactId>xercesImpl</artifactId>-->
                 <!--</exclusion>-->
                 <!--<exclusion>-->
                     <!--<groupId>org.codehaus.groovy</groupId>-->
@@ -250,7 +253,7 @@
                     <!--<groupId>commons-beanutils</groupId>-->
                     <!--<artifactId>commons-beanutils</artifactId>-->
                 <!--</exclusion>-->
-            <!--</exclusions>-->
+            </exclusions>
         </dependency>
 
         <!--slf4j logging facade for java is abstraction for other logging frameworks e.g. logback, log4j-->

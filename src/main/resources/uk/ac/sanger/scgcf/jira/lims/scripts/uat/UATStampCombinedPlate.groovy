@@ -48,7 +48,7 @@ void process(Issue curIssue) {
 
     // get the source plate barcodes
     String plateBarcode = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_CMB_PLT_BARCODE"))
-    LOG.debug "plateBarcode = ${plateBarcode}"
+    LOG.debug "source plate barcode = ${plateBarcode}"
 
     // send to UATFunction and return plate barcodes and details
     String stampPlateBarcode, stampPlateDetails

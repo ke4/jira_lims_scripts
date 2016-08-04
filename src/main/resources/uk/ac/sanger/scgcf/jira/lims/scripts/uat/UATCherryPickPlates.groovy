@@ -46,13 +46,23 @@ switch (issueTypeName) {
 void process( Issue curIssue ) {
     LOG.debug "UAT Processing: Cherry Pick Plates"
 
-    // get the source plate barcode
-    String plateBarcode = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_CMB_PLT_BARCODE"))
-    LOG.debug "plateBarcode = ${plateBarcode}"
+    // get the source plate barcodes
+    String plateBarcodes = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_SPLIT_PLT_BARCODES"))
+    LOG.debug "source plate barcodes = ${plateBarcodes}"
+
+    // split this into a list on comma and check it has 4 entries
+    ArrayList<String> plateBarcodesList = plateBarcodes.split(/,/)
+    LOG.debug "plateBarcodesList = ${plateBarcodesList}"
+
+    if(plateBarcodesList.size() != 4) {
+        LOG.error "Expected split plates barcode list size of 4 but got ${plateBarcodesList.size()}"
+        //TODO: how to stop transition or error gracefully
+        return
+    }
 
     // send to UATFunction and return plate barcode and details
     String chryPickPlateBarcode, chryPickPlateDetails
-    (chryPickPlateBarcode, chryPickPlateDetails) = UATFunctions.cherryPickPlates(plateBarcode)
+    (chryPickPlateBarcode, chryPickPlateDetails) = UATFunctions.cherryPickPlates(plateBarcodesList)
 
     // set the barcodes custom field
     JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_CHRY_PLT_BARCODE"), chryPickPlateBarcode)

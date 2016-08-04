@@ -4,6 +4,9 @@ import com.atlassian.jira.issue.Issue
 import groovy.transform.Field
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import uk.ac.sanger.scgcf.jira.lims.actions.UATFunctions
+import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
+import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
 
 // create logging class
 @Field private final Logger LOG = LoggerFactory.getLogger(getClass())
@@ -42,4 +45,21 @@ switch (issueTypeName) {
 
 void process( Issue curIssue ) {
     LOG.debug "UAT Processing: Pool To Tubes"
+
+    // get the source plate barcode
+    String plateBarcode = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_SEL_STAMP_PLT_BARCODE"))
+    LOG.debug "source plate barcode = ${plateBarcode}"
+
+    // send to UATFunction and return tube barcodes and details
+    String poolTubeBarcodes, poolTubeDetails
+    (poolTubeBarcodes, poolTubeDetails) = UATFunctions.poolToTubes(plateBarcode)
+
+    LOG.debug "poolTubeBarcodes = ${poolTubeBarcodes}"
+    LOG.debug "poolTubeDetails = ${poolTubeDetails}"
+
+    // set the barcodes custom field
+    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_POOL_TUBE_BARCODES"), poolTubeBarcodes)
+
+    // set the details custom field
+    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_POOL_TUBE_DETAILS"), poolTubeDetails)
 }

@@ -81,6 +81,11 @@
       "cfname": "UAT norm tube details",
       "cfid": 10915,
       "cfidstring": "customfield_10915"
+    },
+    "UAT_REPORT_DETAILS": {
+      "cfname": "UAT Report",
+      "cfid": 11000,
+      "cfidstring": "customfield_11000"
     }
   }
 }

@@ -48,14 +48,14 @@ void process( Issue curIssue ) {
 
     // get the source plate barcodes
     String plateBarcodes = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_SPLIT_PLT_BARCODES"))
-    LOG.debug "plateBarcodes = ${plateBarcodes}"
+    LOG.debug "source plate barcodes = ${plateBarcodes}"
 
     // split this into a list on comma and check it has 4 entries
     ArrayList<String> plateBarcodesList = plateBarcodes.split(/,/)
     LOG.debug "plateBarcodesList = ${plateBarcodesList}"
 
     if(plateBarcodesList.size() != 4) {
-        log.error "Expected split plates barcode list size of 4 but got ${plateBarcodesList.size()}"
+        LOG.error "Expected split plates barcode list size of 4 but got ${plateBarcodesList.size()}"
         //TODO how to stop transition or error gracefully
         return
     }
