@@ -48,12 +48,12 @@ class MatContServicesWrapperTest extends Specification {
         notThrown Exception
         sMaterialBatchPath.getClass() == String
 
-        when: "check for presence of lims config filepath environment variable"
-        String sJiraLimsConfigFilePath = EnvVariableAccess.getJiraLimsConfigFilePath()
-
-        then:
-        notThrown Exception
-        sJiraLimsConfigFilePath.getClass() == String
+//        when: "check for presence of lims config filepath environment variable"
+//        String sJiraLimsConfigFilePath = EnvVariableAccess.getJiraLimsConfigFilePath()
+//
+//        then:
+//        notThrown Exception
+//        sJiraLimsConfigFilePath.getClass() == String
     }
 
     def 'test whether can create a local labware object'() {
