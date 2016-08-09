@@ -25,7 +25,7 @@ if (curIssue == null) {
 def issueTypeName = curIssue.getIssueType().getName()
 
 // NB. do not check state as this transition can be called from all other states
-
+LOG.debug "issueTypeName = ${issueTypeName}"
 switch (issueTypeName) {
     case "Task":
         process( curIssue )
@@ -58,11 +58,12 @@ void process( Issue curIssue ) {
             ConfigReader.getCFName("UAT_NORM_TUBE_BARCODES"),
             ConfigReader.getCFName("UAT_NORM_TUBE_DETAILS")
     ]
-    LOG.debug fieldNames
+    LOG.debug fieldNames.toString()
 
     // clear the custom field value in the issue
     fieldNames.each { curFieldName ->
-        LOG.debug "curFieldName: ${curFieldName}"
+        LOG.debug "clearing field for curFieldName: ${curFieldName}"
+        LOG.debug "curFieldName class = ${curFieldName.getClass()}"
         JiraAPIWrapper.clearCustomFieldValueByName( curIssue, curFieldName )
     }
 }

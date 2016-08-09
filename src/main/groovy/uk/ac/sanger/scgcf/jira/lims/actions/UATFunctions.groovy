@@ -1248,7 +1248,6 @@ class UATFunctions {
         LOG.debug "tubeBarcodesList = ${tubeBarcodesList.toString()}"
 
         // hierarchy holds the relationships between materials, listing holds each unique material and its details
-//        Map materialsHierarchy = [:]
         Map materialsListing = [:]
 
         // fetch labwares for the 4 normalised tubes
@@ -1267,16 +1266,16 @@ class UATFunctions {
             sb.append("========================= \n")
             sb.append("Report for tube ${tubeIndx + 1} \n")
             sb.append("========================= \n")
-            // one material per tube, fetch the material id
+            // one material per tube, fetch the material id then the material
             String normalisedMaterialUUID = normalisedTubeLabwares.get(tubeIndx).materialUuids().get(0)
-            LOG.debug "srcMaterialUUID = ${normalisedMaterialUUID}"
             Material normalisedMaterial = Material.getMaterials([normalisedMaterialUUID]).get(0)
 
             materialsListing[normalisedMaterialUUID] = normalisedMaterial
 
+            // recursively fetch all the materials ancestor parent materials
             results[tubeIndx] = getParentMaterials(materialsListing, normalisedMaterial, 0)
-            LOG.debug "materialsListing size = ${materialsListing.size()}"
 
+            // in this case we know what each level represents (NB does not get cherry pick branch)
             (0..6).each { int curLvl ->
                 switch (curLvl) {
                     case 0:
@@ -1284,7 +1283,6 @@ class UATFunctions {
                         break
                     case 1:
                         sb.append("Library Pool material \n")
-
                         break
                     case 2:
                         sb.append("Selective Stamped materials: \n")
@@ -1309,6 +1307,7 @@ class UATFunctions {
 
                 int counter = 0
 
+                // modify the list to remove duplicates e.g. from where multiple samples were split from the same parent
                 List curResults = results[tubeIndx]
                 LOG.debug "curResults size = ${curResults.size()}"
                 List uniqueCurResults = curResults.unique(false)
@@ -1337,7 +1336,6 @@ class UATFunctions {
         }
 
         // return report
-        LOG.debug("report details = ${sb.toString()}")
         sb.toString()
     }
 
@@ -1345,42 +1343,34 @@ class UATFunctions {
      * Recursive method to fetch parent materials
      * @param materialsListing - so we don't have to fetch the same material from the DB twice
      * @param curMaterial
-     * @param level
+     * @param level - 0 is for starting point, +1 for each parent level above that
      * @return
      */
     static def getParentMaterials(Map materialsListing, Material curMaterial, level = 0) {
 
         def results = []
 
-        // [parent material id, current material id, level]
-
-        LOG.debug "processing material id = ${curMaterial.getId()} at level ${level}"
+        // result lines contain: [parent material id, current material id, level]
 
         if (curMaterial.getParents() == null || curMaterial.getParents().size() == 0) {
-            LOG.debug "No parents"
-//            LOG.debug "Add Result: 0, ${curMaterial.getId()}, ${level}"
+            // no further parents, have reach top of hierarchy
             results.add(["0", curMaterial.getId(), level])
         } else {
-            LOG.debug "Found ${curMaterial.getParents().size()} parents"
             curMaterial.getParents().each { parentMaterial ->
-                // if not already exists in materials list get material with uuid and add it
-                // this will contain the metadata
+                // if this material does not already exist in list get it with uuid and add it
                 if (materialsListing.containsKey(parentMaterial.getId())) {
-//                    LOG.debug "parent already listed for ${parentMaterial.getId()}"
                     parentMaterial = (Material) materialsListing[parentMaterial.getId()]
                 } else {
-//                    LOG.debug "parent not listed, fetching for ${parentMaterial.getId()}"
                     parentMaterial = Material.getMaterials([parentMaterial.getId()]).get(0)
                     materialsListing[parentMaterial.getId()] = parentMaterial
                 }
-//                LOG.debug "Add Result: ${parentMaterial.getId()}, ${curMaterial.getId()}, ${level}"
+                // add a line to the results
                 results.add([parentMaterial.getId(), curMaterial.getId(), level])
 
-                // recursive call
+                // make recursive call
                 results.addAll(getParentMaterials(materialsListing, parentMaterial, level + 1))
             }
         }
-
         results
     }
 }
