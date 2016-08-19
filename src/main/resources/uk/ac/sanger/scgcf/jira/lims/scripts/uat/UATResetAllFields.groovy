@@ -56,7 +56,8 @@ void process( Issue curIssue ) {
             ConfigReader.getCFName("UAT_POOL_TUBE_BARCODES"),
             ConfigReader.getCFName("UAT_POOL_TUBE_DETAILS"),
             ConfigReader.getCFName("UAT_NORM_TUBE_BARCODES"),
-            ConfigReader.getCFName("UAT_NORM_TUBE_DETAILS")
+            ConfigReader.getCFName("UAT_NORM_TUBE_DETAILS"),
+            ConfigReader.getCFName("UAT_REPORT_DETAILS")
     ]
     LOG.debug fieldNames.toString()
 

@@ -1,6 +1,10 @@
 package uk.ac.sanger.scgcf.jira.lims.scripts.uat
 
+import com.atlassian.jira.component.ComponentAccessor
 import com.atlassian.jira.issue.Issue
+import com.atlassian.jira.issue.attachment.CreateAttachmentParamsBean
+import com.atlassian.jira.security.JiraAuthenticationContext
+import com.atlassian.jira.user.ApplicationUser
 import groovy.transform.Field
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -64,8 +68,48 @@ void process( Issue curIssue ) {
     String reportDetails
     reportDetails = UATFunctions.reportOnTubes(tubeBarcodesList)
 
-    LOG.debug "reportDetails = ${reportDetails}"
-
     // set the details custom field
-    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_REPORT_DETAILS"), reportDetails)
+    String repString = "Check attachment for report details"
+    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_REPORT_DETAILS"), repString)
+
+    def attachmentManager = ComponentAccessor.getAttachmentManager()
+
+    JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext()
+    ApplicationUser user = jiraAuthenticationContext.getLoggedInUser()
+    if (user == null) {
+        LOG.error "User not found when creating report, cannot create attachment"
+        //TODO: error handling
+        return
+    }
+    LOG.debug "User for writing attachment : ${user.getName()}"
+
+    // create File object
+    File reportFile = File.createTempFile("temp", null)
+
+    BufferedWriter writer
+    try {
+        LOG.debug "Write to file"
+        writer = new BufferedWriter(new FileWriter(reportFile))
+        writer.write(reportDetails)
+    } catch (Exception e) {
+        LOG.error "Exception writing attachment file for report"
+        LOG.error e.printStackTrace()
+    } finally {
+        if (writer != null) writer.close()
+    }
+
+    def now = new Date()
+    String fileName = "report_${now.format("yyyyMMdd_HHmmss")}.txt"
+    LOG.debug "fileName : ${fileName}"
+
+    // write the attachment to the issue
+    def bean = new CreateAttachmentParamsBean.Builder()
+            .file(reportFile)
+            .filename(fileName)
+            .contentType("text/html")
+            .author(user)
+            .issue(curIssue)
+            .build()
+    attachmentManager.createAttachment(bean)
+
 }

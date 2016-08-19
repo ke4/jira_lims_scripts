@@ -305,32 +305,40 @@ class UATFunctions {
         ArrayList<String> destPlatesBarcodeList = []
 
         // extract other details from plates and materials
-        StringBuilder sb = new StringBuilder();
-        sb.append("Split plate details: \n")
+        StringBuilder sb = new StringBuilder()
+
+        LOG.debug "Split plate details:"
+        sb.append("Split plate details:\n")
         destPlateLabwares.eachWithIndex { Labware curPlate, int indx ->
             destPlatesBarcodeList.push(curPlate.getBarcode())
             sb.with {
-                append("Plate number: ${(indx + 1).toString()} \n")
-                append("Labware UUID: ${curPlate.getId().toString()} \n")
-                append("Ext Id: ${curPlate.getExternalId()} \n")
-                append("BC: ${curPlate.getBarcode()} \n")
-                append("Number of Materials: ${curPlate.materialUuids().size()} \n")
-                append("Created at: ${curPlate.getCreated_at()} \n")
-                append("Wells: \n")
+                append("Plate number: ${(indx + 1).toString()}\n")
+                append("Labware UUID: ${curPlate.getId().toString()}\n")
+                append("Ext Id: ${curPlate.getExternalId()}\n")
+                append("BC: ${curPlate.getBarcode()}\n")
+                append("Number of Materials: ${curPlate.materialUuids().size()}\n")
+                append("Created at: ${curPlate.getCreated_at()}\n")
+
+                LOG.debug("Plt num: ${(indx + 1).toString()}\n")
+                LOG.debug("LW UUID: ${curPlate.getId().toString()}\n")
+                LOG.debug("Ext Id: ${curPlate.getExternalId()}\n")
+                LOG.debug("BC: ${curPlate.getBarcode()}\n")
+                LOG.debug("Number of Materials: ${curPlate.materialUuids().size()}\n")
+                LOG.debug("Created at: ${curPlate.getCreated_at()}\n")
+                LOG.debug("Wells:\n")
                 // well material details
                 (0..95).each { wellIndx ->
                     String curMatId = curPlate.receptacles[wellIndx].materialUuid
                     String curLocnName = curPlate.receptacles[wellIndx].location.name
                     Material curMat = Material.getMaterials([curMatId])[0]
                     String parMatId = curMat.parents[0].id
-                    append("${curLocnName} : ${curMat.getName()} : Id = ${curMatId} : Parent = ${parMatId} \n")
+                    LOG.debug("${curLocnName} Id = ${curMat.getName()} Parent = ${curMatId},${parMatId}\n")
                 }
                 append("\n")
             }
         }
         String destPlateBarcodesString = destPlatesBarcodeList.join(",")
         LOG.debug("splitPlateBarcodesString = ${destPlateBarcodesString}")
-        LOG.debug("splitPlate details string = ${sb.toString()}")
 
         [destPlateBarcodesString, sb.toString()]
     }
@@ -394,6 +402,7 @@ class UATFunctions {
 
         // extract other details from the combined 384 well plate
         StringBuilder sb = new StringBuilder();
+        LOG.debug "Combined plate details:"
         sb.append("Combined plate details: \n")
 
         sb.with {
@@ -401,7 +410,14 @@ class UATFunctions {
             append("Ext Id: ${destCmbPlateLabware.getExternalId()} \n")
             append("BC: ${destCmbPlateLabware.getBarcode()} \n")
             append("Created at: ${destCmbPlateLabware.getCreated_at()} \n\n")
-            append("Quadrant 1 wells:\n")
+            append("Number of quadrant 1 wells: ${quadrant1Locns.size()}")
+
+            LOG.debug("Labware UUID: ${destCmbPlateLabware.getId().toString()} \n")
+            LOG.debug("Ext Id: ${destCmbPlateLabware.getExternalId()} \n")
+            LOG.debug("BC: ${destCmbPlateLabware.getBarcode()} \n")
+            LOG.debug("Created at: ${destCmbPlateLabware.getCreated_at()} \n\n")
+            LOG.debug("Number of quadrant 1 wells: ${quadrant1Locns.size()}")
+            LOG.debug("Quadrant 1 wells:\n")
             quadrant1Locns.each { String curLocn ->
                 String curMatId = destCmbPlateLabware.receptacles.find { r -> r.location.name == curLocn }.materialUuid
                 Material curMat = Material.getMaterials([curMatId])[0]
@@ -416,10 +432,12 @@ class UATFunctions {
                         parMdVal = curMd.getValue()
                     }
                 }
-                append("${curLocn} : ${curMat.getName()} : Id = ${curMatId} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
+                LOG.debug("${curLocn} : ${curMat.getName()} : Id = ${curMatId} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
             }
             append("\n")
-            append("Quadrant 2 wells:\n")
+            append("Number of quadrant 2 wells: ${quadrant2Locns.size()}")
+
+            LOG.debug("Quadrant 2 wells:\n")
             quadrant2Locns.each { String curLocn ->
                 String curMatId = destCmbPlateLabware.receptacles.find { r -> r.location.name == curLocn }.materialUuid
                 Material curMat = Material.getMaterials([curMatId])[0]
@@ -434,10 +452,12 @@ class UATFunctions {
                         parMdVal = curMd.getValue()
                     }
                 }
-                append("${curLocn} : ${curMat.getName()} : Id = ${curMatId} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
+                LOG.debug("${curLocn} : ${curMat.getName()} : Id = ${curMatId} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
             }
             append("\n")
-            append("Quadrant 3 wells:\n")
+            append("Number of quadrant 3 wells: ${quadrant3Locns.size()}")
+
+            LOG.debug("Quadrant 3 wells:\n")
             quadrant3Locns.each { String curLocn ->
                 String curMatId = destCmbPlateLabware.receptacles.find { r -> r.location.name == curLocn }.materialUuid
                 Material curMat = Material.getMaterials([curMatId])[0]
@@ -452,10 +472,12 @@ class UATFunctions {
                         parMdVal = curMd.getValue()
                     }
                 }
-                append("${curLocn} : ${curMat.getName()} : Id = ${curMatId} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
+                LOG.debug("${curLocn} : ${curMat.getName()} : Id = ${curMatId} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
             }
             append("\n")
-            append("Quadrant 4 wells:\n")
+            append("Number of quadrant 4 wells: ${quadrant4Locns.size()}")
+
+            LOG.debug("Quadrant 4 wells:\n")
             quadrant4Locns.each { String curLocn ->
                 String curMatId = destCmbPlateLabware.receptacles.find { r -> r.location.name == curLocn }.materialUuid
                 Material curMat = Material.getMaterials([curMatId])[0]
@@ -470,7 +492,7 @@ class UATFunctions {
                         parMdVal = curMd.getValue()
                     }
                 }
-                append("${curLocn} : ${curMat.getName()} : Id = ${curMatId} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
+                LOG.debug("${curLocn} : ${curMat.getName()} : Id = ${curMatId} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
             }
             append("\n")
 
@@ -618,6 +640,7 @@ class UATFunctions {
 
         // extract other details from plate and materials
         StringBuilder sb = new StringBuilder();
+        LOG.debug "Cherry Pick plate details:"
         sb.append("Cherry Pick plate details: \n")
         sb.with {
             append("Labware UUID: ${destChryPickPlateLabware.getId().toString()} \n")
@@ -625,7 +648,13 @@ class UATFunctions {
             append("BC: ${destChryPickPlateLabware.getBarcode()} \n")
             append("Number of Materials: ${destChryPickPlateLabware.materialUuids().size()} \n")
             append("Created at: ${destChryPickPlateLabware.getCreated_at()} \n")
-            append("Wells: \n")
+
+            LOG.debug("Labware UUID: ${destChryPickPlateLabware.getId().toString()} \n")
+            LOG.debug("Ext Id: ${destChryPickPlateLabware.getExternalId()} \n")
+            LOG.debug("BC: ${destChryPickPlateLabware.getBarcode()} \n")
+            LOG.debug("Number of Materials: ${destChryPickPlateLabware.materialUuids().size()} \n")
+            LOG.debug("Created at: ${destChryPickPlateLabware.getCreated_at()} \n")
+            LOG.debug("Wells: \n")
             // well material details
             (0..95).each { wellIndx ->
                 String curMatId = destChryPickPlateLabware.receptacles[wellIndx].materialUuid
@@ -649,7 +678,7 @@ class UATFunctions {
                         parMdVal = curMd.getValue()
                     }
                 }
-                append("${curLocnName} : ${curMat.getName()} : Id = ${curMatId} : Val = ${curMdVal} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
+                LOG.debug("${curLocnName} : ${curMat.getName()} : Id = ${curMatId} : Val = ${curMdVal} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
             }
             append("\n")
         }
@@ -722,6 +751,7 @@ class UATFunctions {
 
         // extract other details from plate and materials
         StringBuilder sb = new StringBuilder();
+        LOG.debug "Stamp plate details:"
         sb.append("Stamp plate details: \n")
         sb.with {
             append("Labware UUID: ${destStampPlateLabware.getId().toString()} \n")
@@ -729,7 +759,13 @@ class UATFunctions {
             append("BC: ${destStampPlateLabware.getBarcode()} \n")
             append("Number of Materials: ${destStampPlateLabware.materialUuids().size()} \n")
             append("Created at: ${destStampPlateLabware.getCreated_at()} \n")
-            append("Wells: \n")
+
+            LOG.debug("Labware UUID: ${destStampPlateLabware.getId().toString()} \n")
+            LOG.debug("Ext Id: ${destStampPlateLabware.getExternalId()} \n")
+            LOG.debug("BC: ${destStampPlateLabware.getBarcode()} \n")
+            LOG.debug("Number of Materials: ${destStampPlateLabware.materialUuids().size()} \n")
+            LOG.debug("Created at: ${destStampPlateLabware.getCreated_at()} \n")
+            LOG.debug("Wells: \n")
             // well material details
             (0..383).each { wellIndx ->
                 String curMatId = destStampPlateLabware.receptacles[wellIndx].materialUuid
@@ -757,7 +793,7 @@ class UATFunctions {
                         parMdVal = curMd.getValue()
                     }
                 }
-                append("${curLocnName} : ${curMat.getName()} : Id = ${curMatId} : Conc = ${curMdConc} : Pass = ${curMdPass} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
+                LOG.debug("${curLocnName} : ${curMat.getName()} : Id = ${curMatId} : Conc = ${curMdConc} : Pass = ${curMdPass} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
             }
             append("\n")
         }
@@ -857,6 +893,7 @@ class UATFunctions {
 
         // extract other details from plate and materials
         StringBuilder sb = new StringBuilder();
+        LOG.debug "Selective Stamp plate details:"
         sb.append("Selective Stamp plate details: \n")
         sb.with {
             append("Labware UUID: ${destSelStampPlateLabware.getId().toString()} \n")
@@ -864,7 +901,13 @@ class UATFunctions {
             append("BC: ${destSelStampPlateLabware.getBarcode()} \n")
             append("Number of Materials: ${destSelStampPlateLabware.materialUuids().size()} \n")
             append("Created at: ${destSelStampPlateLabware.getCreated_at()} \n")
-            append("Wells: \n")
+
+            LOG.debug("Labware UUID: ${destSelStampPlateLabware.getId().toString()} \n")
+            LOG.debug("Ext Id: ${destSelStampPlateLabware.getExternalId()} \n")
+            LOG.debug("BC: ${destSelStampPlateLabware.getBarcode()} \n")
+            LOG.debug("Number of Materials: ${destSelStampPlateLabware.materialUuids().size()} \n")
+            LOG.debug("Created at: ${destSelStampPlateLabware.getCreated_at()} \n")
+            LOG.debug("Wells: \n")
             // well material details
             (0..383).each { wellIndx ->
                 String curWellLocn = destSelStampPlateLabware.receptacles[wellIndx].location.name
@@ -896,7 +939,7 @@ class UATFunctions {
                             parMdVal = curMd.getValue()
                         }
                     }
-                    append("${curWellLocn} : ${curMat.getName()} : Id = ${curMatId} : Tag1/2 = ${curMdTag1}/${curMdTag2} : Pass = ${curMdPass} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
+                    LOG.debug("${curWellLocn} : ${curMat.getName()} : Id = ${curMatId} : Tag1/2 = ${curMdTag1}/${curMdTag2} : Pass = ${curMdPass} : Parent Id = ${parMatId} : Cell initial name = ${parMdVal} \n")
                 }
             }
             append("\n")
@@ -1093,7 +1136,7 @@ class UATFunctions {
         ArrayList<String> tubeBarcodeList = []
 
         // extract other details from tubes and materials
-        LOG.debug "build display details"
+
         StringBuilder sb = new StringBuilder();
         sb.append("Library Pool Tube details: \n")
         destPoolTubeLabwares.eachWithIndex { Labware curTube, int indx ->
@@ -1106,6 +1149,8 @@ class UATFunctions {
                 append("Ext Id: ${curTube.getExternalId()} \n")
                 append("BC: ${curTube.getBarcode()} \n")
                 append("Material UUID: ${curTube.getReceptacles()[0].materialUuid} \n")
+                Material curMat = Material.getMaterials([curTube.getReceptacles()[0].materialUuid])[0]
+                append("Number of Parent Materials: ${curMat.getParents().size()} \n")
                 append("Created at: ${curTube.getCreated_at()} \n")
 //                switch (indx) {
 //                    case 0:
@@ -1336,7 +1381,8 @@ class UATFunctions {
         }
 
         // return report
-        sb.toString()
+        LOG.debug sb.toString()
+        return sb.toString()
     }
 
     /**
