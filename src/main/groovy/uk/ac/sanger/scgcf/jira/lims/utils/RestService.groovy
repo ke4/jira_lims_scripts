@@ -4,6 +4,7 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import org.apache.http.client.ClientProtocolException
+import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 
 /**
  * The {@code RestService} class represents a utility class that can communicate
@@ -13,8 +14,8 @@ import org.apache.http.client.ClientProtocolException
  */
 class RestService {
 
-    public Map request(Method method, ContentType contentType, String requestPath, Map<String, String> params) {
-        HTTPBuilder http = new HTTPBuilder(SequencescapeConstants.SS_BASE_URL)
+    public Map request(Method method, ContentType contentType, String requestPath, def requestBody) {
+        HTTPBuilder http = new HTTPBuilder(ConfigReader.getSequencescapeDetails()['baseUrl'])
         http.handler.success = { resp, reader ->
             [response:resp, reader:reader]
         }
@@ -23,13 +24,9 @@ class RestService {
         def map = new HashMap<String, Object>()
         try{
             map = http.request(method, contentType) { req ->
-                uri.path = "${SequencescapeConstants.API_VERSION}$requestPath"
-                headers.Cookie = "api_key=${SequencescapeConstants.API_KEY}"
-                body = [
-                        "search": [
-                                "name": params['projectname']
-                        ]
-                ]
+                uri.path = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/$requestPath"
+                headers.Cookie = "api_key=${ConfigReader.getSequencescapeDetails()['apiKey']}"
+                body = requestBody
             }
         } catch(ClientProtocolException | IOException e) {
             throw e

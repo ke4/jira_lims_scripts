@@ -1,9 +1,9 @@
 package uk.ac.sanger.scgcf.jira.lims.validations
 
 import groovyx.net.http.Method
+import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.exceptions.RestServiceException
 import uk.ac.sanger.scgcf.jira.lims.utils.RestService
-import uk.ac.sanger.scgcf.jira.lims.utils.SequencescapeConstants
 
 import static groovyx.net.http.ContentType.JSON
 
@@ -15,6 +15,9 @@ import static groovyx.net.http.ContentType.JSON
  * Created by ke4 on 03/10/2016.
  */
 class SequencescapeValidator {
+
+    public static String SS_PROJECT_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Project Name does not exist"
+    public static String SS_STUDY_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Study Name does not exist"
 
     RestService restService = new RestService()
 
@@ -28,8 +31,7 @@ class SequencescapeValidator {
      * @throws RestServiceException
      */
     public boolean validateProjectName(String projectName) throws RestServiceException {
-        def params = ["projectname": projectName]
-        validateProjectOrStudyName(params, SequencescapeConstants.SEARCH_PROJECT_BY_NAME_UUID)
+        validateProjectOrStudyName(projectName, ConfigReader.getSequencescapeDetails()['searchProjectByName'] as String)
     }
 
     /**
@@ -42,12 +44,16 @@ class SequencescapeValidator {
      * @throws RestServiceException
      */
     public boolean validateStudyName(String studyName) throws RestServiceException {
-        def params = ["studyname": studyName]
-        validateProjectOrStudyName(params, SequencescapeConstants.SEARCH_STUDY_BY_NAME_UUID)
+        validateProjectOrStudyName(studyName, ConfigReader.getSequencescapeDetails()['searchStudyByName'] as String)
     }
 
-    private boolean validateProjectOrStudyName(Map<String, String> params, String search) {
-        def responseMap = restService.request(Method.POST, JSON, search, params)
+    private boolean validateProjectOrStudyName(String name, String search) {
+        def requestBody = [
+                "search": [
+                        "name": name
+                ]
+        ]
+        def responseMap = restService.request(Method.POST, JSON, search, requestBody)
         def response = responseMap['response']
         def reader = responseMap['reader']
 

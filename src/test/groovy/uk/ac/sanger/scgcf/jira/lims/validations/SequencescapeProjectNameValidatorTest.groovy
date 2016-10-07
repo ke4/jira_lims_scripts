@@ -1,8 +1,8 @@
 package uk.ac.sanger.scgcf.jira.lims.validations
 
+import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.exceptions.RestServiceException
 import uk.ac.sanger.scgcf.jira.lims.utils.RestService
-import uk.ac.sanger.scgcf.jira.lims.utils.SequencescapeConstants
 
 import static groovyx.net.http.ContentType.JSON
 import groovyx.net.http.Method
@@ -32,7 +32,7 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         ]
 
         restServiceStub.request(
-                Method.POST, JSON, SequencescapeConstants.SEARCH_PROJECT_BY_NAME_UUID, params) >> responseMap
+                Method.POST, JSON, ConfigReader.getSequencescapeDetails()['searchProjectByName'] as String, params) >> responseMap
 
         def validator = new SequencescapeValidator()
         validator.restService = restServiceStub
@@ -75,7 +75,7 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         ]
 
         restServiceStub.request(
-                Method.POST, JSON, SequencescapeConstants.SEARCH_PROJECT_BY_NAME_UUID, params) >> responseMap
+                Method.POST, JSON, ConfigReader.getSequencescapeDetails()['searchProjectByName'] as String, params) >> responseMap
 
         def validator = new SequencescapeValidator()
         validator.restService = restServiceStub
@@ -103,7 +103,7 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         ]
 
         restServiceStub.request(
-                Method.POST, JSON, SequencescapeConstants.SEARCH_PROJECT_BY_NAME_UUID, params) >> responseMap
+                Method.POST, JSON, ConfigReader.getSequencescapeDetails()['searchProjectByName'] as String, params) >> responseMap
 
         def validator = new SequencescapeValidator()
         validator.restService = restServiceStub

@@ -2,9 +2,9 @@ package uk.ac.sanger.scgcf.jira.lims.validations
 
 import groovyx.net.http.Method
 import spock.lang.Specification
+import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.exceptions.RestServiceException
 import uk.ac.sanger.scgcf.jira.lims.utils.RestService
-import uk.ac.sanger.scgcf.jira.lims.utils.SequencescapeConstants
 
 import static groovyx.net.http.ContentType.JSON
 
@@ -32,7 +32,7 @@ class SequencescapeStudyNameValidatorTest extends Specification {
         ]
 
         restServiceStub.request(
-                Method.POST, JSON, SequencescapeConstants.SEARCH_STUDY_BY_NAME_UUID, params) >> responseMap
+                Method.POST, JSON, ConfigReader.getSequencescapeDetails()['searchStudyByName'] as String, params) >> responseMap
 
         def validator = new SequencescapeValidator()
         validator.restService = restServiceStub
@@ -77,7 +77,7 @@ class SequencescapeStudyNameValidatorTest extends Specification {
         ]
 
         restServiceStub.request(
-                Method.POST, JSON, SequencescapeConstants.SEARCH_STUDY_BY_NAME_UUID, params) >> responseMap
+                Method.POST, JSON, ConfigReader.getSequencescapeDetails()['searchStudyByName'] as String, params) >> responseMap
 
         def validator = new SequencescapeValidator()
         validator.restService = restServiceStub
@@ -105,7 +105,7 @@ class SequencescapeStudyNameValidatorTest extends Specification {
         ]
 
         restServiceStub.request(
-                Method.POST, JSON, SequencescapeConstants.SEARCH_STUDY_BY_NAME_UUID, params) >> responseMap
+                Method.POST, JSON, ConfigReader.getSequencescapeDetails()['searchStudyByName'] as String, params) >> responseMap
 
         def validator = new SequencescapeValidator()
         validator.restService = restServiceStub
