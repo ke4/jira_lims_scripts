@@ -37,6 +37,15 @@ class ConfigReader {
         }
     }
 
+    static def getSequencescapeDetails() {
+        LOG.debug "Get Sequencescape details"
+        if(configMap == null) {
+            parseConfigFile()
+        }
+
+        configMap['sequencescapeDetails']
+    }
+
     static String getCFName(String cfAlias) {
         LOG.debug "In config getCFName with alias ${cfAlias}"
         if(configMap == null) {
@@ -65,7 +74,7 @@ class ConfigReader {
         }
         // TODO: what to do if not found?
         String cfIdString = configMap['custom_fields'][cfAlias]['cfidstring']
-        LOG.debug "CF name = ${cfIdString}"
+        LOG.debug "CF idString = ${cfIdString}"
         cfIdString
     }
 }
