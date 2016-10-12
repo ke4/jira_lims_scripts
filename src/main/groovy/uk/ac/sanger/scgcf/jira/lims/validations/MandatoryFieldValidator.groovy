@@ -15,6 +15,8 @@ import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
 @Slf4j(value = "LOG")
 class MandatoryFieldValidator {
 
+    public static String COMMON_ERROR_MESSAGE = "The fields marked below are mandatory."
+
     /**
      * This method validates the list of given fields whether they got any values.
      * If a field has not got a value, then the validator
@@ -49,7 +51,7 @@ class MandatoryFieldValidator {
         LOG.debug "Mandatory field validation finished"
 
         if (invalidInputException) {
-            invalidInputException.addError("The fields marked below is mandatory to be filled.")
+            invalidInputException.addError(COMMON_ERROR_MESSAGE)
 
             throw invalidInputException
         }

@@ -44,7 +44,7 @@ class MandatoryFieldsValidatorTest extends Specification {
         then: "InvalidInputException should be thrown"
         InvalidInputException ex = thrown()
         Map<String, String> errorMessagesMap = ex.getErrors()
-        ex.genericErrors[0] == "The fields marked below is mandatory to be filled."
+        ex.genericErrors[0] == MandatoryFieldValidator.COMMON_ERROR_MESSAGE
         errorMessagesMap.size() == 2
         errorMessagesMap.get(mockedCustomFieldIDs[1]) == "You must specify a value for ${mockedCustomFieldNames[1]}.".toString()
         errorMessagesMap.get(mockedCustomFieldIDs[2]) == "You must specify a value for ${mockedCustomFieldNames[2]}.".toString()
@@ -74,7 +74,7 @@ class MandatoryFieldsValidatorTest extends Specification {
 
         def mandatoryFieldValidator = new MandatoryFieldValidator()
 
-        expect: "some mandatory fields has not been filled"
+        expect: "validator returns true"
         assert mandatoryFieldValidator.validate(issueStub, mandatoryFieldNames)
     }
 
