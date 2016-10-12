@@ -62,11 +62,12 @@ class ConfigReader {
         def tmpConfigMap = configMap
         for (def key: keys) {
             element = tmpConfigMap[key]
+            if (!element) break;
             tmpConfigMap = element
         }
 
         if (!element) {
-            throw NoSuchElementException("No element found with the given keys: ${keys.toString()}".toString())
+            throw new NoSuchElementException("No element found with the given keys: ${keys.toString()}".toString())
         }
 
         element

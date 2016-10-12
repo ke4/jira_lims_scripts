@@ -7,12 +7,29 @@ class ConfigReaderTest extends Specification {
     def 'test can read config file'() {
 
         expect: "test can read custom field aliases"
-        assert ConfigReader.getCFName("UAT_CUST_TUBE_BARCODES") == "UAT cust tube barcodes"
+        assert ConfigReader.getCFName("UAT_CUST_TUBE_BARCODES") == "Tiny Created Tubes Barcode field"
         assert ConfigReader.getCFId("UAT_CUST_TUBE_BARCODES") == 10900
         assert ConfigReader.getCFIdString("UAT_CUST_TUBE_BARCODES") == "customfield_10900"
 
-        assert ConfigReader.getCFName("UAT_CUST_TUBE_DETAILS") == "UAT cust tube details"
+        assert ConfigReader.getCFName("UAT_CUST_TUBE_DETAILS") == "Tiny Customer Tube Details"
         assert ConfigReader.getCFId("UAT_CUST_TUBE_DETAILS") == 10901
         assert ConfigReader.getCFIdString("UAT_CUST_TUBE_DETAILS") == "customfield_10901"
+
+        assert ConfigReader.getConfigElement(
+                ["validation", "mandatoryFields", "SeqPL: Studies", "Study", "Create"]) ==
+                [ "Cost Code", "Prelim ID", "Team Number", "SeqS Project Name", "SeqS Study Name",
+                  "Sequencing Mode", "Species", "HMDMC ref. number"]
+    }
+
+    def "when reader can't find an element, then NoSuchElementException will be thrown"() {
+        setup:
+        List<String> keys = ["no","such","keys"]
+
+        when:
+        ConfigReader.getConfigElement(keys)
+
+        then: "NoSuchElementException will be thrown"
+        NoSuchElementException ex = thrown()
+        ex.message == "No element found with the given keys: ${keys.toString()}".toString()
     }
 }
