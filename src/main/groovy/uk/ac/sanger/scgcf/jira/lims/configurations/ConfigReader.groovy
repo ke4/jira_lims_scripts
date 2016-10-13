@@ -46,6 +46,33 @@ class ConfigReader {
         configMap['sequencescapeDetails']
     }
 
+    /**
+     * Gets a configuration element from the config file using the given key list.
+     * @param keys the list of the configuration keys
+     * @return the required configuration element or throws {@code NoSuchElementException}
+     * if there is no element belongs to the given keys
+     */
+    static def getConfigElement(List<String> keys) {
+        LOG.debug "Get config element details"
+        if(configMap == null) {
+            parseConfigFile()
+        }
+
+        def element = null
+        def tmpConfigMap = configMap
+        for (def key: keys) {
+            element = tmpConfigMap[key]
+            if (!element) break;
+            tmpConfigMap = element
+        }
+
+        if (!element) {
+            throw new NoSuchElementException("No element found with the given keys: ${keys.toString()}".toString())
+        }
+
+        element
+    }
+
     static String getCFName(String cfAlias) {
         LOG.debug "In config getCFName with alias ${cfAlias}"
         if(configMap == null) {
