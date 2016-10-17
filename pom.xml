@@ -10,9 +10,9 @@
     <version>0.0.19</version>
 
     <!-- To output to plugin format use atlassian-plugin packaging -->
-    <!--<packaging>atlassian-plugin</packaging>-->
+    <packaging>atlassian-plugin</packaging>
     <!-- To test in Intellij use jar packaging -->
-    <packaging>jar</packaging>
+    <!--<packaging>jar</packaging>-->
 
     <!-- Properties - versions of dependencies to use -->
     <properties>
@@ -80,12 +80,12 @@
 
         <!-- For ScriptRunner plugin -->
         <!-- To test in Intellij comment this out! -->
-        <!--<dependency>-->
-            <!--<groupId>com.onresolve.jira.groovy</groupId>-->
-            <!--<artifactId>groovyrunner</artifactId>-->
-            <!--<version>${scriptrunner.version}</version>-->
-            <!--<scope>provided</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.onresolve.jira.groovy</groupId>
+            <artifactId>groovyrunner</artifactId>
+            <version>${scriptrunner.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!--For the Materials/Container services-->
         <dependency>
