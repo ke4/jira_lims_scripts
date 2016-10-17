@@ -18,7 +18,11 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         String invalidProjectName = "invalid"
-        def params = ["projectname": invalidProjectName]
+        def params = [
+                         "search": [
+                             "name": invalidProjectName
+                         ]
+                     ]
 
         def responseStatus = 404
         def responseJSON = [
@@ -46,7 +50,11 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         String validProjectName = "100 cycle test"
-        def params = ["projectname": validProjectName]
+        def params = [
+                "search": [
+                        "name": validProjectName
+                ]
+        ]
 
         def responseStatus = 301
         def responseJSON = [
@@ -89,7 +97,11 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         String someProjectName = "some project"
-        def params = ["projectname": someProjectName]
+        def params = [
+                "search": [
+                        "name": someProjectName
+                ]
+        ]
 
         def responseStatus = 501
         def responseJSON = [
