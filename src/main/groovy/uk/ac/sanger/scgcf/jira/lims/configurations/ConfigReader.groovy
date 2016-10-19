@@ -73,8 +73,13 @@ class ConfigReader {
         element
     }
 
-    static String getCFName(String cfAlias) {
-        LOG.debug "In config getCFName with alias ${cfAlias}"
+    /**
+     * Returns the name of the custom field from the configuration file searched by the given alias name.
+     * @param cfAlias the alias name of the custom field
+     * @return the name of the queried custom field given by its alias name
+     */
+    static String getCustomFieldName(String cfAlias) {
+        LOG.debug "In config getCustomFieldName with alias ${cfAlias}"
         if(configMap == null) {
             parseConfigFile()
         }

@@ -1,17 +1,14 @@
 package uk.ac.sanger.scgcf.jira.lims.service_wrappers
 
-import com.atlassian.jira.ComponentManager
 import com.atlassian.jira.bc.issue.IssueService
+import com.atlassian.jira.component.ComponentAccessor
 import com.atlassian.jira.issue.CustomFieldManager
 import com.atlassian.jira.issue.Issue
 import com.atlassian.jira.issue.IssueInputParameters
+import com.atlassian.jira.issue.fields.CustomField
 import com.atlassian.jira.security.JiraAuthenticationContext
 import com.atlassian.jira.user.ApplicationUser
 import groovy.util.logging.Slf4j
-import com.atlassian.jira.issue.ModifiedValue
-import com.atlassian.jira.issue.util.DefaultIssueChangeHolder
-import com.atlassian.jira.component.ComponentAccessor
-import com.atlassian.jira.issue.fields.CustomField
 
 /**
  * This class handles interactions with the Jira API

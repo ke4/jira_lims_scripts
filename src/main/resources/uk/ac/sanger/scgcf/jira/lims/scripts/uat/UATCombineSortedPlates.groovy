@@ -47,7 +47,7 @@ void process( Issue curIssue ) {
     LOG.debug "UAT Processing: Combine Sorted Plates"
 
     // get the source plate barcodes
-    String plateBarcodes = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_SPLIT_PLT_BARCODES"))
+    String plateBarcodes = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("UAT_SPLIT_PLT_BARCODES"))
     LOG.debug "source plate barcodes = ${plateBarcodes}"
 
     // split this into a list on comma and check it has 4 entries
@@ -65,8 +65,8 @@ void process( Issue curIssue ) {
     (combinePlateBarcode, combinePlateDetails) = UATFunctions.combineSortedPlates(plateBarcodesList)
 
     // set the barcodes custom field
-    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_CMB_PLT_BARCODE"), combinePlateBarcode)
+    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("UAT_CMB_PLT_BARCODE"), combinePlateBarcode)
 
     // set the details custom field
-    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_CMB_PLT_DETAILS"), combinePlateDetails)
+    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("UAT_CMB_PLT_DETAILS"), combinePlateDetails)
 }

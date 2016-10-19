@@ -20,22 +20,22 @@ LOG.debug "Validating Sequencescape Project Name existence"
 def sequencescapeValidator = new SequencescapeValidator()
 
 // get the project and study name from the issue
-String projectName = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCFName("SEQS_PROJECT_NAME"))
+String projectName = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("SEQS_PROJECT_NAME"))
 LOG.debug "The retrieved project name: '$projectName'"
 
-String studyName = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCFName("SEQS_STUDY_NAME"))
+String studyName = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("SEQS_STUDY_NAME"))
 LOG.debug "The retrieved study name: '$studyName'"
 
 def invalidInputException = new InvalidInputException()
 if (!sequencescapeValidator.validateProjectName(projectName)) {
     invalidInputException.addError(
-            JiraAPIWrapper.getCustomFieldIDByName(ConfigReader.getCFName("SEQS_PROJECT_NAME")),
+            JiraAPIWrapper.getCustomFieldIDByName(ConfigReader.getCustomFieldName("SEQS_PROJECT_NAME")),
             SequencescapeValidator.SS_PROJECT_NOT_EXISTS_ERROR_MESSAGE)
 }
 
 if (!sequencescapeValidator.validateStudyName(studyName)) {
     invalidInputException.addError(
-            JiraAPIWrapper.getCustomFieldIDByName(ConfigReader.getCFName("SEQS_STUDY_NAME")),
+            JiraAPIWrapper.getCustomFieldIDByName(ConfigReader.getCustomFieldName("SEQS_STUDY_NAME")),
             SequencescapeValidator.SS_STUDY_NOT_EXISTS_ERROR_MESSAGE)
 }
 
