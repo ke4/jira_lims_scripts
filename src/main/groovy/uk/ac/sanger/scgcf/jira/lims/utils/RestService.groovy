@@ -14,18 +14,23 @@ import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
  */
 class RestService {
 
-    public Map request(Method method, ContentType contentType, String requestPath, def requestBody) {
-        HTTPBuilder http = new HTTPBuilder(ConfigReader.getSequencescapeDetails()['baseUrl'])
-        http.handler.success = { resp, reader ->
+    HTTPBuilder httpBuilder
+
+    public RestService(String requestBaseURL) {
+        this.httpBuilder = new HTTPBuilder(requestBaseURL)
+    }
+
+    public Map request(Method method, Map<?, ?> requestHeaders, ContentType contentType, String servicePath, def requestBody) {
+        httpBuilder.handler.success = { resp, reader ->
             [response:resp, reader:reader]
         }
-        http.handler.failure = http.handler.success
+        httpBuilder.handler.failure = httpBuilder.handler.success
 
         def map = new HashMap<String, Object>()
         try{
-            map = http.request(method, contentType) { req ->
-                uri.path = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/$requestPath"
-                headers.Cookie = "api_key=${ConfigReader.getSequencescapeDetails()['apiKey']}"
+            map = httpBuilder.request(method, contentType) { req ->
+                uri.path = servicePath
+                headers = requestHeaders
                 body = requestBody
             }
         } catch(ClientProtocolException | IOException e) {
