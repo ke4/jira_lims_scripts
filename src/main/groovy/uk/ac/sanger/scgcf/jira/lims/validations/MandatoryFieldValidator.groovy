@@ -4,6 +4,7 @@ import com.atlassian.jira.issue.Issue
 import com.atlassian.jira.issue.fields.CustomField
 import com.opensymphony.workflow.InvalidInputException
 import groovy.util.logging.Slf4j
+import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
 
 /**
@@ -36,8 +37,9 @@ class MandatoryFieldValidator {
         def invalidInputException
 
         fieldsToValidate.forEach {
-            CustomField customfieldToValidate = getCustomField(it)
-            Object customFieldValue = JiraAPIWrapper.getCustomFieldValueByName(issue, it)
+            String customFieldName = ConfigReader.getCustomFieldName(it)
+            CustomField customfieldToValidate = JiraAPIWrapper.getCustomFieldByName(customFieldName)
+            Object customFieldValue = JiraAPIWrapper.getCustomFieldValueByName(issue, customFieldName)
 
             LOG.debug "Validating $it mandatory field. Its value: '$customFieldValue'"
             if (customfieldToValidate && !customFieldValue) {
@@ -57,9 +59,5 @@ class MandatoryFieldValidator {
         }
 
         return true
-    }
-
-    private CustomField getCustomField(def customFieldName) {
-        JiraAPIWrapper.getCustomFieldByName(customFieldName)
     }
 }

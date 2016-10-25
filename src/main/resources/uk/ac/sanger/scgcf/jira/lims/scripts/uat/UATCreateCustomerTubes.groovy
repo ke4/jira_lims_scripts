@@ -51,8 +51,8 @@ void process( Issue curIssue ) {
     (tubeBarcodes, tubeDetails) = UATFunctions.createCustomerTubes()
 
     // set the barcodes custom field
-    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_CUST_TUBE_BARCODES"), tubeBarcodes)
+    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("UAT_CUST_TUBE_BARCODES"), tubeBarcodes)
 
     // set the details custom field
-    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_CUST_TUBE_DETAILS"), tubeDetails)
+    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("UAT_CUST_TUBE_DETAILS"), tubeDetails)
 }

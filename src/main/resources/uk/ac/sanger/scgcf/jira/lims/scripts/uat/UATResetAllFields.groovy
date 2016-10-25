@@ -1,7 +1,6 @@
 package uk.ac.sanger.scgcf.jira.lims.scripts.uat
 
 import com.atlassian.jira.issue.Issue
-import uk.ac.sanger.scgcf.jira.lims.actions.UATFunctions
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
 import groovy.transform.Field
@@ -41,23 +40,23 @@ void process( Issue curIssue ) {
 
     // fetch field names using aliases
     def fieldNames = [
-            ConfigReader.getCFName("UAT_CUST_TUBE_BARCODES"),
-            ConfigReader.getCFName("UAT_CUST_TUBE_DETAILS"),
-            ConfigReader.getCFName("UAT_SPLIT_PLT_BARCODES"),
-            ConfigReader.getCFName("UAT_SPLIT_PLT_DETAILS"),
-            ConfigReader.getCFName("UAT_CMB_PLT_BARCODE"),
-            ConfigReader.getCFName("UAT_CMB_PLT_DETAILS"),
-            ConfigReader.getCFName("UAT_CHRY_PLT_BARCODE"),
-            ConfigReader.getCFName("UAT_CHRY_PLT_DETAILS"),
-            ConfigReader.getCFName("UAT_STAMP_PLT_BARCODE"),
-            ConfigReader.getCFName("UAT_STAMP_PLT_DETAILS"),
-            ConfigReader.getCFName("UAT_SEL_STAMP_PLT_BARCODE"),
-            ConfigReader.getCFName("UAT_SEL_STAMP_PLT_DETAILS"),
-            ConfigReader.getCFName("UAT_POOL_TUBE_BARCODES"),
-            ConfigReader.getCFName("UAT_POOL_TUBE_DETAILS"),
-            ConfigReader.getCFName("UAT_NORM_TUBE_BARCODES"),
-            ConfigReader.getCFName("UAT_NORM_TUBE_DETAILS"),
-            ConfigReader.getCFName("UAT_REPORT_DETAILS")
+            ConfigReader.getCustomFieldName("UAT_CUST_TUBE_BARCODES"),
+            ConfigReader.getCustomFieldName("UAT_CUST_TUBE_DETAILS"),
+            ConfigReader.getCustomFieldName("UAT_SPLIT_PLT_BARCODES"),
+            ConfigReader.getCustomFieldName("UAT_SPLIT_PLT_DETAILS"),
+            ConfigReader.getCustomFieldName("UAT_CMB_PLT_BARCODE"),
+            ConfigReader.getCustomFieldName("UAT_CMB_PLT_DETAILS"),
+            ConfigReader.getCustomFieldName("UAT_CHRY_PLT_BARCODE"),
+            ConfigReader.getCustomFieldName("UAT_CHRY_PLT_DETAILS"),
+            ConfigReader.getCustomFieldName("UAT_STAMP_PLT_BARCODE"),
+            ConfigReader.getCustomFieldName("UAT_STAMP_PLT_DETAILS"),
+            ConfigReader.getCustomFieldName("UAT_SEL_STAMP_PLT_BARCODE"),
+            ConfigReader.getCustomFieldName("UAT_SEL_STAMP_PLT_DETAILS"),
+            ConfigReader.getCustomFieldName("UAT_POOL_TUBE_BARCODES"),
+            ConfigReader.getCustomFieldName("UAT_POOL_TUBE_DETAILS"),
+            ConfigReader.getCustomFieldName("UAT_NORM_TUBE_BARCODES"),
+            ConfigReader.getCustomFieldName("UAT_NORM_TUBE_DETAILS"),
+            ConfigReader.getCustomFieldName("UAT_REPORT_DETAILS")
     ]
     LOG.debug fieldNames.toString()
 

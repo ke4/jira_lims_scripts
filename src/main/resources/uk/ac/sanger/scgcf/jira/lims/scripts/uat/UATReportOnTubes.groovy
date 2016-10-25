@@ -51,7 +51,7 @@ void process( Issue curIssue ) {
     LOG.debug "UAT Processing: Report On Tubes"
 
     // get the source barcodes
-    String tubeBarcodes = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_NORM_TUBE_BARCODES"))
+    String tubeBarcodes = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("UAT_NORM_TUBE_BARCODES"))
     LOG.debug "tubeBarcodes = ${tubeBarcodes}"
 
     // split this into a list on comma and check it has 4 entries
@@ -70,7 +70,7 @@ void process( Issue curIssue ) {
 
     // set the details custom field
     String repString = "Check attachment for report details"
-    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCFName("UAT_REPORT_DETAILS"), repString)
+    JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("UAT_REPORT_DETAILS"), repString)
 
     def attachmentManager = ComponentAccessor.getAttachmentManager()
 
