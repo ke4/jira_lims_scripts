@@ -19,7 +19,7 @@ class SequencescapeValidator {
     public static String SS_PROJECT_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Project Name does not exist"
     public static String SS_STUDY_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Study Name does not exist"
 
-    RestService restService = new RestService()
+    RestService restService = new RestService(ConfigReader.getSequencescapeDetails()['baseUrl'])
 
     /**
      * Validates if the given project exists in Sequencescape.
@@ -31,7 +31,8 @@ class SequencescapeValidator {
      * @throws RestServiceException
      */
     public boolean validateProjectName(String projectName) throws RestServiceException {
-        validateProjectOrStudyName(projectName, ConfigReader.getSequencescapeDetails()['searchProjectByName'] as String)
+        validateProjectOrStudyName(projectName,
+            "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}")
     }
 
     /**
@@ -44,16 +45,20 @@ class SequencescapeValidator {
      * @throws RestServiceException
      */
     public boolean validateStudyName(String studyName) throws RestServiceException {
-        validateProjectOrStudyName(studyName, ConfigReader.getSequencescapeDetails()['searchStudyByName'] as String)
+        validateProjectOrStudyName(studyName,
+            "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchStudyByName']}")
     }
 
-    private boolean validateProjectOrStudyName(String name, String search) {
+    private boolean validateProjectOrStudyName(String name, String servicePath) {
         def requestBody = [
                 "search": [
                         "name": name
                 ]
         ]
-        def responseMap = restService.request(Method.POST, JSON, search, requestBody)
+
+        Map<?, ?> requestHeaders = [:]
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
+        def responseMap = restService.request(Method.POST, requestHeaders, JSON, servicePath, requestBody)
         def response = responseMap['response']
         def reader = responseMap['reader']
 

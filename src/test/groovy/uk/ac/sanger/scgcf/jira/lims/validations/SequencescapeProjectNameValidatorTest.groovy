@@ -17,6 +17,9 @@ class SequencescapeProjectNameValidatorTest extends Specification {
 
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
+        Map<?, ?> requestHeaders = [:]
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
+        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}"
         String invalidProjectName = "invalid"
         def params = [
                          "search": [
@@ -36,7 +39,7 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         ]
 
         restServiceStub.request(
-                Method.POST, JSON, ConfigReader.getSequencescapeDetails()['searchProjectByName'] as String, params) >> responseMap
+                Method.POST, requestHeaders, JSON, servicePath, params) >> responseMap
 
         def validator = new SequencescapeValidator()
         validator.restService = restServiceStub
@@ -49,6 +52,9 @@ class SequencescapeProjectNameValidatorTest extends Specification {
 
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
+        Map<String, String> requestHeaders = [:]
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
+        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}"
         String validProjectName = "100 cycle test"
         def params = [
                 "search": [
@@ -83,7 +89,7 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         ]
 
         restServiceStub.request(
-                Method.POST, JSON, ConfigReader.getSequencescapeDetails()['searchProjectByName'] as String, params) >> responseMap
+                Method.POST, requestHeaders, JSON, servicePath, params) >> responseMap
 
         def validator = new SequencescapeValidator()
         validator.restService = restServiceStub
@@ -96,6 +102,9 @@ class SequencescapeProjectNameValidatorTest extends Specification {
 
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
+        Map<String, String> requestHeaders = [:]
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
+        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}"
         String someProjectName = "some project"
         def params = [
                 "search": [
@@ -115,7 +124,7 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         ]
 
         restServiceStub.request(
-                Method.POST, JSON, ConfigReader.getSequencescapeDetails()['searchProjectByName'] as String, params) >> responseMap
+                Method.POST, requestHeaders, JSON, servicePath, params) >> responseMap
 
         def validator = new SequencescapeValidator()
         validator.restService = restServiceStub
