@@ -16,7 +16,7 @@ import uk.ac.sanger.scgcf.jira.lims.validations.WorkflowUtils
 Issue curIssue = issue
 Map<String, Object> curTansientVars = transientVars
 
-LOG.debug "Validating Sequencescape Project Name existence"
+LOG.debug "Executing dependent field validation"
 
 def mainConfigKey = "validation"
 def validationType = "dependentFields"
