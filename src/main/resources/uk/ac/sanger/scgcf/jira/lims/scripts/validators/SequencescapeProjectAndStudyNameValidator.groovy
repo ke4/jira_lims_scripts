@@ -15,7 +15,7 @@ import uk.ac.sanger.scgcf.jira.lims.validations.SequencescapeValidator
 // get the current issue (from binding)
 Issue curIssue = issue
 
-LOG.debug "Validating Sequencescape Project Name existence"
+LOG.debug "Validating Sequencescape Project and Study name existence"
 
 def sequencescapeValidator = new SequencescapeValidator()
 
