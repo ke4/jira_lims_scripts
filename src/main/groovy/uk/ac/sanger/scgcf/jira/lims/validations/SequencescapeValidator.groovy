@@ -68,8 +68,12 @@ class SequencescapeValidator {
             false
         } else {
             throw new RestServiceException("The request was not successful. The server responded with ${response.status} code."
+                    + System.getProperty("line.separator")
                     + " The error message is: $reader"
-            )
+                    + System.getProperty("line.separator")
+                    + "URL: ${restService.httpBuilder.uri}/$servicePath"
+                    + System.getProperty("line.separator")
+                    + "Request: $requestBody");
         }
     }
 }
