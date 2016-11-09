@@ -16,16 +16,11 @@ class ConfigReader {
     static def configMap = null;
 
     // fetch and parse jira_lims_config.json from configs
-    // contains aliases to custom fields (alias, name, id)
-    // TODO: need a script which can loop through CFs in an instance and create the json with the names and ids
     static void parseConfigFile() {
         LOG.debug "Creating config from json file"
 
         // set configMap from json
         JsonSlurper slurper = new JsonSlurper()
-
-//        URL resourceURL = this.class.getResource("/config/jira_lims_config.json")
-//        Paths.get(resourceURL.toURI()).withReader { Reader reader ->
         Paths.get(EnvVariableAccess.jiraLimsConfigFilePath).withReader { Reader reader ->
             configMap = slurper.parse(reader)
         }
@@ -37,6 +32,10 @@ class ConfigReader {
         }
     }
 
+    /**
+     * Gets the SequenceScape section of the configuration
+     * @return the section of the config map containing the sequencescape details
+     */
     static def getSequencescapeDetails() {
         LOG.debug "Get Sequencescape details"
         if(configMap == null) {
@@ -74,38 +73,58 @@ class ConfigReader {
     }
 
     /**
-     * Returns the name of the custom field from the configuration file searched by the given alias name.
+     * Gets the name of the custom field from the configuration file searched by the given alias name.
      * @param cfAlias the alias name of the custom field
-     * @return the name of the queried custom field given by its alias name
+     * @return the name of the queried custom field
      */
     static String getCustomFieldName(String cfAlias) {
         LOG.debug "In config getCustomFieldName with alias ${cfAlias}"
         if(configMap == null) {
             parseConfigFile()
         }
-        // TODO: what to do if not found?
+
         String cfName = configMap['custom_fields'][cfAlias]['cfname']
+        if (!cfName) {
+            throw new NoSuchElementException("No configmap element found for getCustomFieldName with alias: ${cfAlias}")
+        }
         LOG.debug "CF name = ${cfName}"
         cfName
     }
 
-    static int getCFId(String cfAlias) {
+    /**
+     * Gets the custom field id for the alias name
+     * @param cfAlias the alias name of the custom field
+     * @return the id number of the custom field
+     */
+    static long getCFId(String cfAlias) {
+        LOG.debug "In config getCFId with alias ${cfAlias}"
         if(configMap == null) {
             parseConfigFile()
         }
-        // TODO: what to do if not found?
-        // TODO: convert to int?
-        int cfId = configMap['custom_fields'][cfAlias]['cfid'] as int
+
+        long cfId = configMap['custom_fields'][cfAlias]['cfid'] as long
+        if (!cfId) {
+            throw new NoSuchElementException("No configmap element found for getCFId with alias: ${cfAlias}")
+        }
         LOG.debug "CF id = ${cfId.toString()}"
         cfId
     }
 
+    /**
+     * Gets the custom field id string for the alias name
+     * @param cfAlias
+     * @return the id string for the custom field e.g. customfield_12345
+     */
     static String getCFIdString(String cfAlias) {
+        LOG.debug "In config getCFIdString with alias ${cfAlias}"
         if(configMap == null) {
             parseConfigFile()
         }
-        // TODO: what to do if not found?
+
         String cfIdString = configMap['custom_fields'][cfAlias]['cfidstring']
+        if (!cfIdString) {
+            throw new NoSuchElementException("No configmap element found for getCFIdString with alias: ${cfAlias}")
+        }
         LOG.debug "CF idString = ${cfIdString}"
         cfIdString
     }
