@@ -5,8 +5,9 @@ import groovy.transform.Field
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
+import uk.ac.sanger.scgcf.jira.lims.validations.AtLeastOneFieldValidator
 import uk.ac.sanger.scgcf.jira.lims.validations.MandatoryFieldValidator
-import uk.ac.sanger.scgcf.jira.lims.utils.WorkflowUtils
+import uk.ac.sanger.scgcf.jira.lims.validations.WorkflowUtils
 
 // create logging class
 @Field private final Logger LOG = LoggerFactory.getLogger(getClass())
@@ -15,19 +16,21 @@ import uk.ac.sanger.scgcf.jira.lims.utils.WorkflowUtils
 Issue curIssue = issue
 Map<String, Object> curTansientVars = transientVars
 
-LOG.debug "Executing mandatory field validation"
+LOG.debug "Executing 'At least one fields' validator"
 
 def mainConfigKey = "validation"
-def validationType = "mandatoryFields"
+def validationType = "atLeastOneFields"
 def projectName = curIssue.getProjectObject().getName()
 def issueTypeName = curIssue.getIssueType().getName()
 def transitionName = WorkflowUtils.getTransitionName(curIssue, curTansientVars)
 
-def mandatoryFieldNames = ConfigReader.getConfigElement([mainConfigKey, validationType, projectName, issueTypeName, transitionName])
+List<List<String>> atLeastOneFieldAliasNames = ConfigReader.getConfigElement([mainConfigKey, validationType, projectName, issueTypeName, transitionName])
 
-LOG.debug "Mandatory fields for $projectName[transition: $transitionName]:"
-LOG.debug mandatoryFieldNames as String
+LOG.debug "'at least one fields' for $projectName[transition: $transitionName]:"
 
-def mandatoryValidator = new MandatoryFieldValidator()
+def atLeastOneFieldValidator = new AtLeastOneFieldValidator()
 
-mandatoryValidator.validate(curIssue, mandatoryFieldNames)
+atLeastOneFieldAliasNames.each {
+    LOG.debug it as String
+    atLeastOneFieldValidator.validate(curIssue, it)
+}
