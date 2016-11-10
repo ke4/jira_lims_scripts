@@ -34,6 +34,8 @@ class AtLeastOneFieldValidator {
     public boolean validate(Issue issue, List<String> fieldNameAliases) throws InvalidInputException {
         LOG.debug "At least one field validation started"
 
+        List<String> fieldNames = new ArrayList<>()
+
         for (String fieldNameAlias: fieldNameAliases) {
             String customFieldName = ConfigReader.getCustomFieldName(fieldNameAlias)
             CustomField customFieldToValidate = JiraAPIWrapper.getCustomFieldByName(customFieldName)
@@ -46,10 +48,12 @@ class AtLeastOneFieldValidator {
 
                 return true;
             }
+
+            fieldNames.add(customFieldName)
         }
 
         LOG.debug "At least one field validation finished with error"
 
-        throw new InvalidInputException(COMMON_ERROR_MESSAGE + fieldNameAliases);
+        throw new InvalidInputException(COMMON_ERROR_MESSAGE + fieldNames);
     }
 }
