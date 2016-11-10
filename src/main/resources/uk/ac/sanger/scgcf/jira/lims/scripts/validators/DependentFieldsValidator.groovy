@@ -6,7 +6,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.validations.DependentFieldValidator
-import uk.ac.sanger.scgcf.jira.lims.validations.MandatoryFieldValidator
 import uk.ac.sanger.scgcf.jira.lims.validations.WorkflowUtils
 
 // create logging class
