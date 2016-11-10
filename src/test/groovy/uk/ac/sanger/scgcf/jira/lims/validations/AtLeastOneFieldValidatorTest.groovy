@@ -50,7 +50,7 @@ class AtLeastOneFieldValidatorTest extends Specification {
         then: "InvalidInputException should be thrown"
         InvalidInputException ex = thrown()
         Map<String, String> errorMessagesMap = ex.getErrors()
-        ex.genericErrors[0] == AtLeastOneFieldValidator.COMMON_ERROR_MESSAGE + fieldAliases
+        ex.genericErrors[0] == AtLeastOneFieldValidator.COMMON_ERROR_MESSAGE + fieldNames
     }
 
     def "when any of the field from the collection is filled then the validation pass"() {
