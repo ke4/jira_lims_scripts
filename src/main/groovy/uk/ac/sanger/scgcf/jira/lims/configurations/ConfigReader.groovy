@@ -7,6 +7,8 @@ import uk.ac.sanger.scgcf.jira.lims.utils.EnvVariableAccess
 import java.nio.file.Paths
 
 /**
+ * The {@code ConfigReader} class handles all interaction with the script configuration file.
+ *
  * Created by as28 on 23/06/16.
  */
 
@@ -15,7 +17,9 @@ class ConfigReader {
     // store configurations in map
     static def configMap = null;
 
-    // fetch and parse jira_lims_config.json from configs
+    /**
+     * Fetch and parse jira_lims_config.json from configs
+     */
     static void parseConfigFile() {
         LOG.debug "Creating config from json file"
 
@@ -85,7 +89,7 @@ class ConfigReader {
 
         String cfName = configMap['custom_fields'][cfAlias]['cfname']
         if (!cfName) {
-            throw new NoSuchElementException("No configmap element found for getCustomFieldName with alias: ${cfAlias}")
+            throw new NoSuchElementException("No configmap element found for getCustomFieldName with alias: ${cfAlias}".toString())
         }
         LOG.debug "CF name = ${cfName}"
         cfName
@@ -104,7 +108,7 @@ class ConfigReader {
 
         long cfId = configMap['custom_fields'][cfAlias]['cfid'] as long
         if (!cfId) {
-            throw new NoSuchElementException("No configmap element found for getCFId with alias: ${cfAlias}")
+            throw new NoSuchElementException("No configmap element found for getCFId with alias: ${cfAlias}".toString())
         }
         LOG.debug "CF id = ${cfId.toString()}"
         cfId
@@ -123,7 +127,7 @@ class ConfigReader {
 
         String cfIdString = configMap['custom_fields'][cfAlias]['cfidstring']
         if (!cfIdString) {
-            throw new NoSuchElementException("No configmap element found for getCFIdString with alias: ${cfAlias}")
+            throw new NoSuchElementException("No configmap element found for getCFIdString with alias: ${cfAlias}".toString())
         }
         LOG.debug "CF idString = ${cfIdString}"
         cfIdString
