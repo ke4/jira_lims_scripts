@@ -3,19 +3,24 @@ package uk.ac.sanger.scgcf.jira.lims.utils
 import groovy.util.logging.Slf4j
 
 /**
+ * The {@code LoggingCheck} class is used to test logging is working.
+ *
+ * For scripts running in JIRA you can use the bound log (org.apache.log4j.Category) and levels e.g.
+ * log.debug("msg"), log.info("msg"), log.warn("msg") and log.error("msg")
+ * You can set the log level at the beginning of your script e.g.
+ * log.setLevel(org.apache.log4j.Level.DEBUG)
+ *
+ * For classes you can define them with the slf4j annotation e.g.
+ * @Slf4j(value="LOG")
+ *
+ * In JIRA you can set the logging level visibility in the system settings under Administration ->
+ * logging and profiling -> Configure logging level for another package and add one for uk.ac.sanger.scgcf.jira
+ * N.B. to make this persist between sessions you need to edit WEB-INF/classes/log4j.properties in the JIRA home
+ * directory.
+ *
  * Created by as28 on 13/07/16.
  */
 
-// To get debug messages you can use the object log (org.apache.log4j.Category).
-// It's already binded to your script. So if you write
-// log.error "Debug message"
-// you will see this message in the atlassian-jira.log.
-// You could implement different levels of debug messages.
-// log.debug(), log.info(), log.warn() and log.error() and set the log level at the beginning of your script.
-// log.setLevel(org.apache.log4j.Level.DEBUG)
-
-// N.B. by defining class with the slf4j annotation you do not need to set up a static logging instance
-// via LoggerFactory.getLogger(MyClass.class), you just use log
 @Slf4j(value="LOG")
 class LoggingCheck {
     def execute() {

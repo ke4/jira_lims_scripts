@@ -5,19 +5,16 @@ import uk.ac.sanger.scgcf.jira.lims.utils.MockFunctions
 import uk.ac.sanger.scgcf.jira.services.actions.TransferActions
 import uk.ac.sanger.scgcf.jira.services.models.Labware
 import uk.ac.sanger.scgcf.jira.services.models.LabwareTypes
-import uk.ac.sanger.scgcf.jira.services.models.Location
 import uk.ac.sanger.scgcf.jira.services.models.Material
 import uk.ac.sanger.scgcf.jira.services.models.MaterialType
 import uk.ac.sanger.scgcf.jira.services.models.Metadatum
 import uk.ac.sanger.scgcf.jira.services.models.Receptacle
 
 /**
- * Contains functions for UAT testing
- * isCase()
+ * The {@code UATFunctions} class contains functions for the UAT testing workflow.
+ *
  * Created by as28 on 01/07/16.
  */
-
-// TODO: should functions run as validators? will need to prevent inappropriate processing of labwares as no delete in services DB
 
 @Slf4j(value = "LOG")
 class UATFunctions {
@@ -71,9 +68,9 @@ class UATFunctions {
     }
 
     /**
-     * Create the customer cell tubes and the single related material in each, returning
-     * a list of barcodes in a string and a details string
-     * @return
+     * Create the customer cell tubes and the single related material in each
+     *
+     * @return return a list of barcodes in a string and a details string
      */
     static ArrayList<String> createCustomerTubes() {
         LOG.debug "In createCustomerTubes"
@@ -139,6 +136,7 @@ class UATFunctions {
     /**
      * Take a list of tube barcodes, select the tubes and their materials, and split them
      * across 4 destination 96-well plates
+     *
      * @param tubeBarcodesList
      * @return the Barcodes of the 4 destination plates and details of contents
      */
@@ -345,6 +343,7 @@ class UATFunctions {
 
     /**
      * Combine 4 sorted 96-well cell plates into single 384-well combined plate
+     *
      * @param plateBarcodesList - source plate barcodes
      * @return combined plate barcode and details
      */
@@ -507,6 +506,7 @@ class UATFunctions {
 
     /**
      * Cherry pick specific wells from the combine plate into a new plate
+     *
      * @param sourcePlateBarcode
      * @return cherry pick plate barcode and details
      */
@@ -693,6 +693,7 @@ class UATFunctions {
 
     /**
      * Stamp the 384-well combine plate into a new 384-well plate, well for well
+     *
      * @param sourcePlateBarcode
      * @return stamped plate barcode and details
      */
@@ -808,6 +809,7 @@ class UATFunctions {
     /**
      * Selectively stamp materials from the stamp plate to a new selective stamp plate
      * just taking those wells that have a metadata indicating they're passed
+     *
      * @param sourcePlateBarcode
      * @return destination plate barcode and details
      */
@@ -954,6 +956,7 @@ class UATFunctions {
 
     /**
      * Pool from the selective stamp plate into 4 tubes by quadrant and if metadata pass
+     *
      * @param sourcePlateBarcode
      * @return destination tube barcodes and details
      */
@@ -1182,8 +1185,9 @@ class UATFunctions {
 
     /**
      * Stamp 4 library pool tubes into 4 new tubes
+     *
      * @param tubeBarcodesList
-     * @return
+     * @return a list of tube barcodes in a string and some details in a second string
      */
     static ArrayList<String> stampTubes(ArrayList<String> tubeBarcodesList) {
         LOG.debug "In stampTubes"
@@ -1285,8 +1289,9 @@ class UATFunctions {
      * Follows back up the hierarchy of materials starting with those in the final normalised tubes,
      * NB. this is not flexible, it relies on the exact hierarchy of levels created by the UAT test
      * order.
+     *
      * @param tubeBarcodesList
-     * @return
+     * @return the report as a string
      */
     static String reportOnTubes(ArrayList<String> tubeBarcodesList) {
         LOG.debug "In reportOnTubes"
@@ -1387,6 +1392,7 @@ class UATFunctions {
 
     /**
      * Recursive method to fetch parent materials
+     *
      * @param materialsListing - so we don't have to fetch the same material from the DB twice
      * @param curMaterial
      * @param level - 0 is for starting point, +1 for each parent level above that
