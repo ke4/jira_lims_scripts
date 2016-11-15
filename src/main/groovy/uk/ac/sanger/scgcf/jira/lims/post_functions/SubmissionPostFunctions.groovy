@@ -16,6 +16,11 @@ import uk.ac.sanger.scgcf.jira.lims.utils.WorkflowUtils
 @Slf4j(value = "LOG")
 class SubmissionPostFunctions {
 
+    private static int getTransitionActionId(String workflowName, String transitionAlias) {
+        int actionId = ConfigReader.getConfigElement(["transitions", workflowName, transitionAlias, "tactionid"]) as int
+        actionId
+    }
+
     /**
      * Link a list of plates to the specified Submission issue and transition them if appropriate.
      *
@@ -42,11 +47,7 @@ class SubmissionPostFunctions {
                 // transition the issue to 'In Submission' if it is 'Rdy for Submission'
                 if(plateIssue.getStatus().getName() == 'PltSS2 Rdy for Submission') {
 
-                    // fetch action id for this transition from config file
-                    def mainConfigKey = "transitions"
-                    def workflowName = "plate_ss2"
-                    def transitionAlias = "START_SUBMISSION"
-                    int actionId = ConfigReader.getConfigElement([mainConfigKey, workflowName, transitionAlias, "tactionid"]) as int
+                    int actionId = getTransitionActionId("plate_ss2", "START_SUBMISSION")
 
                     // transition the issue to 'In Submission'
                     ErrorCollection ec = WorkflowUtils.transitionIssue(plateIssue, actionId)
@@ -91,10 +92,7 @@ class SubmissionPostFunctions {
                 // if state of plate was 'In Submission' transition the issue back to 'Rdy for Submission'
                 if(plateIssue.getStatus().getName() == 'PltSS2 In Submission') {
 
-                    def mainConfigKey = "transitions"
-                    def workflowName = "plate_ss2"
-                    def transitionAlias = "REVERT_TO_READY_FOR_SUBMISSION"
-                    int actionId = ConfigReader.getConfigElement([mainConfigKey, workflowName, transitionAlias, "tactionid"]) as int
+                    int actionId = getTransitionActionId("plate_ss2", "REVERT_TO_READY_FOR_SUBMISSION")
 
                     ErrorCollection ec = WorkflowUtils.transitionIssue(plateIssue, actionId)
                     if(ec != null) {
