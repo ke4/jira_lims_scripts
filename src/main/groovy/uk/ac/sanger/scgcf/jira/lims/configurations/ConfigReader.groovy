@@ -150,4 +150,16 @@ class ConfigReader {
         LOG.debug("CF idString = ${cfIdString}".toString())
         cfIdString
     }
+
+    /**
+     * Get the transition id for the specified workflow and transition alias
+     *
+     * @param workflowName
+     * @param transitionAlias
+     * @return
+     */
+    static int getTransitionActionId(String workflowName, String transitionAlias) {
+        int actionId = getConfigElement(["transitions", workflowName, transitionAlias, "tactionid"]) as int
+        actionId
+    }
 }
