@@ -3,6 +3,7 @@ package uk.ac.sanger.scgcf.jira.lims.utils
 import com.atlassian.jira.ComponentManager
 import com.atlassian.jira.component.ComponentAccessor
 import com.atlassian.jira.issue.Issue
+import com.atlassian.jira.issue.IssueManager
 import com.atlassian.jira.issue.MutableIssue
 import com.atlassian.jira.issue.link.IssueLink
 import com.atlassian.jira.issue.link.IssueLinkManager
@@ -15,12 +16,15 @@ import com.atlassian.jira.workflow.JiraWorkflow
 import com.atlassian.jira.workflow.WorkflowTransitionUtil
 import com.atlassian.jira.workflow.WorkflowTransitionUtilImpl
 import com.atlassian.jira.user.ApplicationUser
+import groovy.util.logging.Slf4j
 
 /**
  * Utility class for getting Jira workflow related properties.
  *
  * Created by ke4 on 11/10/2016.
  */
+
+@Slf4j(value = "LOG")
 class WorkflowUtils {
 
     /**
@@ -55,7 +59,7 @@ class WorkflowUtils {
      * @param actionId the transition action id
      * @return the error collection if the validation or transition fail, otherwise nothing
      */
-    public static ErrorCollection transitionIssue(MutableIssue issue, int actionId) {
+    public static void transitionIssue(MutableIssue issue, int actionId) {
         // set up the transition
         WorkflowTransitionUtil wfTransUtil = JiraUtils.loadComponent(WorkflowTransitionUtilImpl.class)
         wfTransUtil.setIssue(issue)
@@ -64,17 +68,27 @@ class WorkflowUtils {
         wfTransUtil.setAction(actionId)
 
         // validate the transition
-        ErrorCollection ec1 = wfTransUtil.validate()
-        if(ec1.hasAnyErrors()) {
-            return ec1
+        ErrorCollection ecValidate = wfTransUtil.validate()
+        if(ecValidate.hasAnyErrors()) {
+            LOG.error("Validation error transitioning plate issue with ID ${issue.getId()}".toString())
+            // Get all non field-specific error messages
+            Collection<String> stringErrors = ecValidate.getErrorMessages()
+            stringErrors.eachWithIndex { String err, int i ->
+                LOG.error("Error ${i}: ${err}".toString())
+            }
+            return
         }
 
         // perform the transition
-        ErrorCollection ec2 = wfTransUtil.progress()
-        if(ec2.hasAnyErrors()) {
-            return ec2
+        ErrorCollection ecProgress = wfTransUtil.progress()
+        if(ecProgress.hasAnyErrors()) {
+            LOG.error("Progress error transitioning plate issue with ID ${issue.getId()}".toString())
+            // Get all non field-specific error messages
+            Collection<String> stringErrors = ecProgress.getErrorMessages()
+            stringErrors.eachWithIndex { String err, int i ->
+                LOG.error("Error ${i}: ${err}".toString())
+            }
         }
-        return null
     }
 
     /**
@@ -120,5 +134,60 @@ class WorkflowUtils {
         IssueLink issueLink = issLnkMngr.getIssueLink(sourceIssue.id, destinationIssue.id, issLnkType.id)
         // throws IllegalArgumentException if the specified issueLink is null
         issLnkMngr.removeIssueLink(issueLink, user)
+    }
+
+    /**
+     * Get the issue link type for a named issue link
+     *
+     * @param linkName
+     * @return
+     */
+    public static IssueLinkType getIssueLinkType(String linkName) {
+
+        // get the issue link type
+        ComponentManager componentManager = ComponentManager.getInstance()
+        IssueLinkTypeManager issLnkTMngr = componentManager.getComponentInstanceOfType(IssueLinkTypeManager.class)
+        IssueLinkType issueLinkType  = (issLnkTMngr.getIssueLinkTypesByName(linkName))[0]
+
+        issueLinkType
+    }
+
+    /**
+     * Get the list of inward issue links for an issue id
+     *
+     * @param issueId
+     * @return list of IssueLinks
+     */
+    public static List<IssueLink> getInwardLinksListForIssueId(Long issueId) {
+        IssueLinkManager issLnkMngr  = ComponentAccessor.getIssueLinkManager()
+        List<IssueLink> inwardLinksList = issLnkMngr.getInwardLinks(issueId)
+
+        inwardLinksList
+    }
+
+    /**
+     * Get the list of outward links for an issue id
+     *
+     * @param issueId
+     * @return list of IssueLinks
+     */
+    public static List<IssueLink> getOutwardLinksListForIssueId(Long issueId) {
+        IssueLinkManager issLnkMngr = ComponentAccessor.getIssueLinkManager()
+        List<IssueLink> outwardLinksList = issLnkMngr.getOutwardLinks(issueId)
+
+        outwardLinksList
+    }
+
+    /**
+     * Get a mutable issue for an issue id
+     *
+     * @param issueId
+     * @return mutable version of the issue
+     */
+    public static MutableIssue getMutableIssueForIssueId(Long issueId) {
+        IssueManager issMngr = ComponentAccessor.getIssueManager()
+        MutableIssue mutableIssue = issMngr.getIssueObject(issueId)
+
+        mutableIssue
     }
 }
