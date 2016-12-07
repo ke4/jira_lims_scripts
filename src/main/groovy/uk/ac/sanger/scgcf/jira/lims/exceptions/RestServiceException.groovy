@@ -6,7 +6,7 @@ package uk.ac.sanger.scgcf.jira.lims.exceptions
  *
  * Created by ke4 on 05/10/2016.
  */
-class RestServiceException extends Exception {
+class RestServiceException extends RuntimeException {
 
     RestServiceException(message) {
         super(message)

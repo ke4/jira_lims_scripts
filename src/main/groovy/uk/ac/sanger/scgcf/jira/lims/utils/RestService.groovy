@@ -4,7 +4,6 @@ import groovyx.net.http.ContentType
 import groovyx.net.http.HTTPBuilder
 import groovyx.net.http.Method
 import org.apache.http.client.ClientProtocolException
-import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 
 /**
  * The {@code RestService} class represents a utility class that can communicate

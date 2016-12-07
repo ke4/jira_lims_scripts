@@ -16,8 +16,10 @@ import static groovyx.net.http.ContentType.JSON
  */
 class SequencescapeValidator {
 
-    public static String SS_PROJECT_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Project Name does not exist"
+    public static String SS_PROJECT_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Project Name does not exists"
+    public static String SS_PROJECT_NOT_ACTIVE_ERROR_MESSAGE = "The entered Sequencescape Project Name is not active"
     public static String SS_STUDY_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Study Name does not exist"
+    public static String SS_STUDY_NOT_ACTIVE_ERROR_MESSAGE = "The entered Sequencescape Study Name is not active"
 
     RestService restService = new RestService(ConfigReader.getSequencescapeDetails()['baseUrl'])
 
@@ -30,8 +32,8 @@ class SequencescapeValidator {
      * @return true if the project exists, otherwise false
      * @throws RestServiceException
      */
-    public boolean validateProjectName(String projectName) throws RestServiceException {
-        validateProjectOrStudyName(projectName,
+    public SequencescapeEntityState validateProjectName(String projectName) throws RestServiceException {
+        validateProjectOrStudyName(projectName, "project",
             "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}")
     }
 
@@ -44,12 +46,12 @@ class SequencescapeValidator {
      * @return true if the study exists, otherwise false
      * @throws RestServiceException
      */
-    public boolean validateStudyName(String studyName) throws RestServiceException {
-        validateProjectOrStudyName(studyName,
+    public SequencescapeEntityState validateStudyName(String studyName) throws RestServiceException {
+        validateProjectOrStudyName(studyName, "study",
             "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchStudyByName']}")
     }
 
-    private boolean validateProjectOrStudyName(String name, String servicePath) {
+    private SequencescapeEntityState validateProjectOrStudyName(String name, String type, String servicePath) {
         def requestBody = [
                 "search": [
                         "name": name
@@ -63,9 +65,13 @@ class SequencescapeValidator {
         def reader = responseMap['reader']
 
         if (response.status == 301) {
-            true
+            if (reader[type].state == 'active') {
+                SequencescapeEntityState.ACTIVE
+            } else {
+                SequencescapeEntityState.INACTIVE
+            }
         } else if (response.status == 404) {
-            false
+            SequencescapeEntityState.NOT_EXISTS
         } else {
             throw new RestServiceException("The request was not successful. The server responded with ${response.status} code."
                     + System.getProperty("line.separator")
