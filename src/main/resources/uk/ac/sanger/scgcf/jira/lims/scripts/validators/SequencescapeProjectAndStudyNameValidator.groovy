@@ -7,6 +7,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
+import uk.ac.sanger.scgcf.jira.lims.validations.SequencescapeEntityState
 import uk.ac.sanger.scgcf.jira.lims.validations.SequencescapeValidator
 
 // create logging class
@@ -27,16 +28,27 @@ String studyName = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigRead
 LOG.debug "The retrieved study name: '$studyName'"
 
 def invalidInputException = new InvalidInputException()
-if (!sequencescapeValidator.validateProjectName(projectName)) {
+
+def projectState = sequencescapeValidator.validateProjectName(projectName)
+if (projectState == SequencescapeEntityState.NOT_EXISTS) {
     invalidInputException.addError(
             JiraAPIWrapper.getCustomFieldIDByName(ConfigReader.getCustomFieldName("SEQS_PROJECT_NAME")),
             SequencescapeValidator.SS_PROJECT_NOT_EXISTS_ERROR_MESSAGE)
+} else if (projectState == SequencescapeEntityState.INACTIVE) {
+    invalidInputException.addError(
+            JiraAPIWrapper.getCustomFieldIDByName(ConfigReader.getCustomFieldName("SEQS_PROJECT_NAME")),
+            SequencescapeValidator.SS_PROJECT_NOT_ACTIVE_ERROR_MESSAGE)
 }
 
-if (!sequencescapeValidator.validateStudyName(studyName)) {
+def studyState = sequencescapeValidator.validateStudyName(studyName)
+if (studyState == SequencescapeEntityState.NOT_EXISTS) {
     invalidInputException.addError(
             JiraAPIWrapper.getCustomFieldIDByName(ConfigReader.getCustomFieldName("SEQS_STUDY_NAME")),
             SequencescapeValidator.SS_STUDY_NOT_EXISTS_ERROR_MESSAGE)
+} else if (studyState == SequencescapeEntityState.INACTIVE) {
+    invalidInputException.addError(
+            JiraAPIWrapper.getCustomFieldIDByName(ConfigReader.getCustomFieldName("SEQS_STUDY_NAME")),
+            SequencescapeValidator.SS_STUDY_NOT_ACTIVE_ERROR_MESSAGE)
 }
 
 if (invalidInputException.getErrors().size() > 0) {

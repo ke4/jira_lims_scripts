@@ -45,7 +45,56 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         validator.restService = restServiceStub
 
         expect: "Check if validation failed"
-        assert !validator.validateProjectName(invalidProjectName)
+        validator.validateProjectName(invalidProjectName) == SequencescapeEntityState.NOT_EXISTS
+    }
+
+    def "find not active project name in Sequencescape should return true"() {
+
+        setup: "Create a mock RestService, its parameters and the mocked response"
+        def restServiceStub = Stub(RestService)
+        Map<String, String> requestHeaders = [:]
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
+        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}"
+        String validProjectName = "100 cycle test"
+        def params = [
+                "search": [
+                        "name": validProjectName
+                ]
+        ]
+
+        def responseStatus = 301
+        def responseJSON =
+                [
+                        "project": [
+                                "created_at": "2009-03-02 10:41:12 +0000",
+                                "updated_at": "2014-04-07 16:15:42 +0100",
+                                "uuid": "0ff51cfa-1234-5678-1234-00144f2062b9",
+                                "approved": true,
+                                "budget_cost_centre": null,
+                                "budget_division": "R+D",
+                                "collaborators": null,
+                                "cost_code": "S1234",
+                                "external_funding_source": null,
+                                "funding_comments": "test run",
+                                "funding_model": null,
+                                "name": "test",
+                                "project_manager": "John Smith",
+                                "state": "inactive"
+                        ]
+                ]
+        def responseMap = [
+                response: [status: responseStatus],
+                reader: responseJSON
+        ]
+
+        restServiceStub.request(
+                Method.POST, requestHeaders, JSON, servicePath, params) >> responseMap
+
+        def validator = new SequencescapeValidator()
+        validator.restService = restServiceStub
+
+        expect: "Check if validation succeed"
+        validator.validateProjectName(validProjectName) == SequencescapeEntityState.INACTIVE
     }
 
     def "find valid project name in Sequencescape should return true"() {
@@ -63,7 +112,7 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         ]
 
         def responseStatus = 301
-        def responseJSON = [
+        def responseJSON =
                 [
                     "project": [
                         "created_at": "2009-03-02 10:41:12 +0000",
@@ -82,7 +131,6 @@ class SequencescapeProjectNameValidatorTest extends Specification {
                         "state": "active"
                     ]
                 ]
-        ]
         def responseMap = [
                 response: [status: responseStatus],
                 reader: responseJSON
@@ -95,7 +143,7 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         validator.restService = restServiceStub
 
         expect: "Check if validation succeed"
-        assert validator.validateProjectName(validProjectName)
+        validator.validateProjectName(validProjectName) == SequencescapeEntityState.ACTIVE
     }
 
     def "when the remote service errors should throw exception"() {
@@ -122,6 +170,7 @@ class SequencescapeProjectNameValidatorTest extends Specification {
                 response: [status: responseStatus],
                 reader: responseJSON
         ]
+        def expected_error_message = "The request was not successful. The server responded with 501 code. The error message is: $responseJSON".toString()
 
         restServiceStub.request(
                 Method.POST, requestHeaders, JSON, servicePath, params) >> responseMap
@@ -134,7 +183,7 @@ class SequencescapeProjectNameValidatorTest extends Specification {
 
         then:
         RestServiceException ex = thrown()
-        ex.message ==
-            "The request was not successful. The server responded with 501 code. The error message is: $responseJSON".toString()
+        def matcher = ex.message =~ /(?s).*$expected_error_message.*/
+        assert matcher.matchesPartially()
     }
 }

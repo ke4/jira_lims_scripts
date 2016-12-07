@@ -45,7 +45,59 @@ class SequencescapeStudyNameValidatorTest extends Specification {
         validator.restService = restServiceStub
 
         expect: "Check if validation failed"
-        assert !validator.validateStudyName(invalidStudyName)
+        validator.validateStudyName(invalidStudyName) == SequencescapeEntityState.NOT_EXISTS
+    }
+
+    def "find inactive study name in Sequencescape should return true"() {
+
+        setup: "Create a mock RestService, its parameters and the mocked response"
+        def restServiceStub = Stub(RestService)
+        Map<?, ?> requestHeaders = [:]
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
+        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchStudyByName']}"
+        String validStudyName = "100 cycle test"
+        def params = [
+                "search": [
+                        "name": validStudyName
+                ]
+        ]
+
+        def responseStatus = 301
+        def responseJSON = [
+                "study": [
+                        "uuid": "12345678-1111-2222-4444-123456789012",
+                        "abbreviation": "123STDY",
+                        "abstract": null,
+                        "accession_number": null,
+                        "commercially_available": "No",
+                        "contains_human_dna": "Yes",
+                        "contaminated_human_dna": "No",
+                        "data_release_sort_of_study": "genomic sequencing",
+                        "data_release_strategy": "not applicable",
+                        "description": "testing",
+                        "ethically_approved": true,
+                        "name": "test",
+                        "reference_genome": " ",
+                        "remove_x_and_autosomes": false,
+                        "sac_sponsor": "Me",
+                        "separate_y_chromosome_data": false,
+                        "state": "inactive",
+                        "type": "Test Sequencing"
+                ]
+        ]
+        def responseMap = [
+                response: [status: responseStatus],
+                reader: responseJSON
+        ]
+
+        restServiceStub.request(
+                Method.POST, requestHeaders, JSON, servicePath, params) >> responseMap
+
+        def validator = new SequencescapeValidator()
+        validator.restService = restServiceStub
+
+        expect: "Check if validation succeed"
+        validator.validateStudyName(validStudyName) == SequencescapeEntityState.INACTIVE
     }
 
     def "find valid study name in Sequencescape should return true"() {
@@ -97,7 +149,7 @@ class SequencescapeStudyNameValidatorTest extends Specification {
         validator.restService = restServiceStub
 
         expect: "Check if validation succeed"
-        assert validator.validateStudyName(validStudyName)
+        validator.validateStudyName(validStudyName) == SequencescapeEntityState.ACTIVE
     }
 
     def "when the remote service errors should throw exception"() {
@@ -124,6 +176,7 @@ class SequencescapeStudyNameValidatorTest extends Specification {
                 response: [status: responseStatus],
                 reader: responseJSON
         ]
+        def expected_error_message = "The request was not successful. The server responded with 501 code. The error message is: $responseJSON".toString()
 
         restServiceStub.request(
                 Method.POST, requestHeaders, JSON, servicePath, params) >> responseMap
@@ -136,7 +189,7 @@ class SequencescapeStudyNameValidatorTest extends Specification {
 
         then:
         RestServiceException ex = thrown()
-        ex.message ==
-            "The request was not successful. The server responded with 501 code. The error message is: $responseJSON".toString()
+        def matcher = ex.message =~ /(?s).*$expected_error_message.*/
+        assert matcher.matchesPartially()
     }
 }
