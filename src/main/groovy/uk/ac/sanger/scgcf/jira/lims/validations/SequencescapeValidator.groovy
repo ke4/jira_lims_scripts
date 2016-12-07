@@ -16,7 +16,7 @@ import static groovyx.net.http.ContentType.JSON
  */
 class SequencescapeValidator {
 
-    public static String SS_PROJECT_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Project Name does not exists"
+    public static String SS_PROJECT_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Project Name does not exist"
     public static String SS_PROJECT_NOT_ACTIVE_ERROR_MESSAGE = "The entered Sequencescape Project Name is not active"
     public static String SS_STUDY_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Study Name does not exist"
     public static String SS_STUDY_NOT_ACTIVE_ERROR_MESSAGE = "The entered Sequencescape Study Name is not active"
