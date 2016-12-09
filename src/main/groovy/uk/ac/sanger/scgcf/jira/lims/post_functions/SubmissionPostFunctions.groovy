@@ -1,10 +1,7 @@
 package uk.ac.sanger.scgcf.jira.lims.post_functions
 
-import com.atlassian.jira.component.ComponentAccessor
 import com.atlassian.jira.issue.Issue
-import com.atlassian.jira.issue.IssueManager
 import com.atlassian.jira.issue.MutableIssue
-import com.atlassian.jira.util.ErrorCollection
 import groovy.util.logging.Slf4j
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.utils.WorkflowUtils
