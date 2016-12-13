@@ -5,6 +5,7 @@ import groovyx.net.http.Method
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.exceptions.RestServiceException
 import uk.ac.sanger.scgcf.jira.lims.utils.RestService
+import uk.ac.sanger.scgcf.jira.lims.utils.ValidatorExceptionHandler
 
 import static groovyx.net.http.ContentType.JSON
 
@@ -76,13 +77,11 @@ class SequencescapeValidator {
             SequencescapeEntityState.NOT_EXISTS
         } else {
             def errorMessage = "The Sequencescape validation has failed (HTTP status code: ${response.status})."
+            def additionalMessage= "The error message is: $reader. URL: ${restService.httpBuilder.uri}/$servicePath, Request: $requestBody".toString()
 
-            LOG.error(errorMessage)
-            LOG.error("The error message is: $reader".toString())
-            LOG.error("URL: ${restService.httpBuilder.uri}/$servicePath".toString())
-            LOG.error("Request: $requestBody".toString())
+            def sequenceScapeError = new RestServiceException(errorMessage)
 
-            throw new RestServiceException(errorMessage)
+            ValidatorExceptionHandler.throwAndLog(sequenceScapeError, errorMessage, additionalMessage)
         }
     }
 }
