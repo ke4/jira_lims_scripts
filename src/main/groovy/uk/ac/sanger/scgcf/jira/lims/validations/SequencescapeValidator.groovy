@@ -1,9 +1,11 @@
 package uk.ac.sanger.scgcf.jira.lims.validations
 
+import groovy.util.logging.Slf4j
 import groovyx.net.http.Method
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.exceptions.RestServiceException
 import uk.ac.sanger.scgcf.jira.lims.utils.RestService
+import uk.ac.sanger.scgcf.jira.lims.utils.ValidatorExceptionHandler
 
 import static groovyx.net.http.ContentType.JSON
 
@@ -14,6 +16,7 @@ import static groovyx.net.http.ContentType.JSON
  *
  * Created by ke4 on 03/10/2016.
  */
+@Slf4j(value = "LOG")
 class SequencescapeValidator {
 
     public static String SS_PROJECT_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Project Name does not exist"
@@ -73,13 +76,12 @@ class SequencescapeValidator {
         } else if (response.status == 404) {
             SequencescapeEntityState.NOT_EXISTS
         } else {
-            throw new RestServiceException("The request was not successful. The server responded with ${response.status} code."
-                    + System.getProperty("line.separator")
-                    + " The error message is: $reader"
-                    + System.getProperty("line.separator")
-                    + "URL: ${restService.httpBuilder.uri}/$servicePath"
-                    + System.getProperty("line.separator")
-                    + "Request: $requestBody");
+            def errorMessage = "The Sequencescape validation has failed (HTTP status code: ${response.status})."
+            def additionalMessage= "The error message is: $reader. URL: ${restService.httpBuilder.uri}/$servicePath, Request: $requestBody".toString()
+
+            def sequenceScapeError = new RestServiceException(errorMessage)
+
+            ValidatorExceptionHandler.throwAndLog(sequenceScapeError, errorMessage, additionalMessage)
         }
     }
 }
