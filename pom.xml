@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>jira_lims_scripts</groupId>
+    <artifactId>jira_lims_scripts</artifactId>
+    <version>0.0.33</version>
+
+    <!-- To output to plugin format use atlassian-plugin packaging -->
+    <packaging>atlassian-plugin</packaging>
+    <!-- To test in Intellij use jar packaging -->
+    <!--<packaging>jar</packaging>-->
+
+    <!-- Properties - versions of dependencies to use -->
+    <properties>
+        <jira.version>7.2.3</jira.version>
+        <amps.version>6.2.6</amps.version>
+        <scriptrunner.version>4.3.4</scriptrunner.version>
+        <quick.reload.version>1.24.1</quick.reload.version>
+        <!-- This key is used to keep the consistency between the key in atlassian-plugin.xml and the key to generate bundle. -->
+        <atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
+    </properties>
+
+    <organization>
+        <name>Wellcome Trust Sanger Institute</name>
+        <url>http://www.sanger.ac.uk/</url>
+    </organization>
+
+    <name>jira_lims_scripts</name>
+    <description>Contains scripting for the Single Cell Genomics Core Facility Jira LIMS</description>
+
+    <repositories>
+        <!-- Used to obtain the Container services library from Github -->
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- For Jira API libraries -->
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-api</artifactId>
+            <version>${jira.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- For Jira core libraries - N.B. need to exclude slf4j-log4j12 due to conflict -->
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-core</artifactId>
+            <version>${jira.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- For Groovy language -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.4.5</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/cglib/cglib-nodep -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>3.2.4</version>
+        </dependency>
+
+        <!-- For ScriptRunner plugin -->
+        <!-- To test in Intellij comment this out! -->
+        <dependency>
+            <groupId>com.onresolve.jira.groovy</groupId>
+            <artifactId>groovyrunner</artifactId>
+            <version>${scriptrunner.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--For the Materials/Container services-->
+        <dependency>
+            <groupId>com.github.sanger</groupId>
+            <artifactId>jira_integration_scripts</artifactId>
+            <version>0.1.5</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--slf4j logging facade for java is abstraction for other logging frameworks e.g. logback, log4j-->
+        <!-- this includes the slf4j-api jar so don't need that separately -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.9</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- For JUnit testing framework -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-tests</artifactId>
+            <version>${jira.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- For SPOCK testing framework under JUnit, includes JUnit -->
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <!-- TODO: latest is 1.0-groovy-2.0, scriptrunner contains 0.7 -->
+            <version>0.7-groovy-2.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.groovy</groupId>
+                    <artifactId>groovy-all</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <sourceDirectory>${project.basedir}/src/main/groovy</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/groovy</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/groovy</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>${project.basedir}/src/test/groovy</directory>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-jira-plugin</artifactId>
+                <version>${amps.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <productVersion>${jira.version}</productVersion>
+                    <productDataVersion>${jira.version}</productDataVersion>
+                    <systemPropertyVariables>
+                        <plugin.script.roots>
+                            ${project.basedir}/src/main/resources,${project.basedir}/src/test/resources
+                        </plugin.script.roots>
+                    </systemPropertyVariables>
+
+                    <pluginArtifacts>
+                        <pluginArtifact>
+                            <groupId>com.onresolve.jira.groovy</groupId>
+                            <artifactId>groovyrunner</artifactId>
+                            <version>${scriptrunner.version}</version>
+                        </pluginArtifact>
+                        <pluginArtifact>
+                            <groupId>com.atlassian.labs.plugins</groupId>
+                            <artifactId>quickreload</artifactId>
+                            <version>${quick.reload.version}</version>
+                        </pluginArtifact>
+                    </pluginArtifacts>
+
+                    <enableQuickReload>true</enableQuickReload>
+                    <enableFastdev>false</enableFastdev>
+
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19.1</version>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>
