@@ -10,10 +10,10 @@ import uk.ac.sanger.scgcf.jira.lims.utils.WorkflowUtils
 
 /**
  * This post function extracts a list of selected plates from an nFeed custom field and removes them
- * from the current Submission issue via a function in {@code SubmissionsPostFunctions}.
+ * from the current Smart-seq2 issue via a function in {@code WorkflowUtils}.
  * This removes the link and reverts the plate ticket state if appropriate.
  *
- * Created by as28 on 04/11/2016.
+ * Created by ke4 on 24/01/2017.
  */
 
 // create logging class
@@ -22,11 +22,13 @@ import uk.ac.sanger.scgcf.jira.lims.utils.WorkflowUtils
 // get the current issue (from binding)
 Issue curIssue = issue
 
-LOG.debug "Post-function for removing plates from a Submission"
+String workflowName = "Smart-seq2"
+
+LOG.debug "Post-function for removing plates from a $workflowName workflow".toString()
 
 // fetch the list of selected plates from the nFeed custom field
 def customFieldMngr = ComponentAccessor.getCustomFieldManager()
-def customField =  customFieldMngr.getCustomFieldObject(ConfigReader.getCFId('REMOVE_PLATES_FROM_SUBMISSION'))
+def customField =  customFieldMngr.getCustomFieldObject(ConfigReader.getCFId('GENERIC_REMOVE_PLATES'))
 
 if(customField != null) {
     // the value of the nFeed field is an array of long issue ids for the selected plates
@@ -39,9 +41,9 @@ if(customField != null) {
     }
 
     // link and transition the plate issue(s)
-    WorkflowUtils.removePlatesFromGivenWorkflow(arrayPlateIds, curIssue, "Submission",
-            "REVERT_TO_READY_FOR_SUBMISSION", "PltSS2 In Submission")
+    WorkflowUtils.removePlatesFromGivenWorkflow(arrayPlateIds, curIssue, "Smart-seq2",
+            "REVERT_TO_READY_FOR_SS2", "PltSS2 In SS2")
 
 } else {
-    LOG.error("Failed to get the plate array custom field for removing plates from a Submission")
+    LOG.error("Failed to get the plate array custom field for removing plates")
 }

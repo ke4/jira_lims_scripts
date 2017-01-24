@@ -17,6 +17,7 @@ import com.atlassian.jira.workflow.WorkflowTransitionUtil
 import com.atlassian.jira.workflow.WorkflowTransitionUtilImpl
 import com.atlassian.jira.user.ApplicationUser
 import groovy.util.logging.Slf4j
+import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 
 /**
  * Utility class for getting Jira workflow related properties.
@@ -26,6 +27,42 @@ import groovy.util.logging.Slf4j
 
 @Slf4j(value = "LOG")
 class WorkflowUtils {
+
+    private static final String PLATE_WORKFLOW_NAME = "plate_ss2"
+    /**
+     * Remove the links between a list of plates and the specified issue and transition them if appropriate.
+     *
+     * @param arrayPlateIds the list of plate issue ids
+     * @param issue the specific issue
+     * @param workflowName the name of the current workflow
+     * @param transitionName the name of the transition to execute
+     * @param previousPlateState the name of the previous state of the plate
+     */
+    public static void removePlatesFromGivenWorkflow(String[] arrayPlateIds, Issue issue, String workflowName,
+                                                     String transitionName, String previousPlateState) {
+
+        // get the transition action id
+        int actionId = ConfigReader.getTransitionActionId(PLATE_WORKFLOW_NAME, transitionName)
+
+        // for each issue in list de-link it from the Submission issue and check if state should be changed
+        arrayPlateIds.each { String plateIdString ->
+            Long plateIdLong = Long.parseLong(plateIdString)
+            LOG.debug("Removing link to plate with ID ${plateIdString} from $workflowName".toString())
+
+            MutableIssue mutableIssue = getMutableIssueForIssueId(plateIdLong)
+
+            if(mutableIssue != null && mutableIssue.getIssueType().getName() == 'Plate SS2') {
+
+                // remove the link between the two issues
+                removeIssueLink(issue, mutableIssue, 'Group includes')
+
+                // transition the issue back to previous state
+                if(mutableIssue.getStatus().getName() == previousPlateState) {
+                    transitionIssue(mutableIssue, actionId)
+                }
+            }
+        }
+    }
 
     /**
      * Gets the transition name by the given {@Issue} and actionID of the bounded transition variables.
