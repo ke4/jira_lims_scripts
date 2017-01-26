@@ -17,6 +17,11 @@ import com.atlassian.jira.workflow.WorkflowTransitionUtil
 import com.atlassian.jira.workflow.WorkflowTransitionUtilImpl
 import com.atlassian.jira.user.ApplicationUser
 import groovy.util.logging.Slf4j
+import uk.ac.sanger.scgcf.jira.lims.enums.LinkTypeName
+import uk.ac.sanger.scgcf.jira.lims.enums.SS2PlateStateName
+import uk.ac.sanger.scgcf.jira.lims.enums.TransitionName
+import uk.ac.sanger.scgcf.jira.lims.enums.WorkflowName
+import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 
 /**
  * Utility class for getting Jira workflow related properties.
@@ -26,6 +31,81 @@ import groovy.util.logging.Slf4j
 
 @Slf4j(value = "LOG")
 class WorkflowUtils {
+
+    /**
+     * Remove the links between a list of plates and the specified issue and transition them if appropriate.
+     *
+     * @param removePlatesParams a <code>PlateRemovalParameterHolder</code> object holding all the parameters
+     * needed for removing a plate from the given workflow
+     */
+    public static void removePlatesFromGivenWorkflow(PlateRemovalParameterHolder removePlatesParams) {
+
+        // get the transition action id
+        int actionId = ConfigReader.getTransitionActionId(removePlatesParams.plateWorkflowName, removePlatesParams.transitionName)
+
+        // for each issue in list de-link it from the Submission issue and check if state should be changed
+        removePlatesParams.plateIdsToRemove.each { String plateIdString ->
+            Long plateIdLong = Long.parseLong(plateIdString)
+            LOG.debug("Removing link to plate with ID ${plateIdString} from ${removePlatesParams.currentWorkflowName}".toString())
+
+            MutableIssue mutableIssue = getMutableIssueForIssueId(plateIdLong)
+
+            if(mutableIssue != null && mutableIssue.getIssueType().getName() == removePlatesParams.plateWorkflowName) {
+
+                // remove the link between the two issues
+                removeIssueLink(removePlatesParams.currentIssue, mutableIssue, removePlatesParams.linkTypeName)
+
+                // transition the issue back to previous state
+                if(mutableIssue.getStatus().getName() == removePlatesParams.previousPlateState) {
+                    transitionIssue(mutableIssue, actionId)
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param arrayPlateIds the list of plate issue ids
+     * @param curIssue the specific issue
+     * @return PlateRemovalParameterHolder object holding all the parameters needed for removing a plate from the
+     * Smart-seq2 workflow
+     */
+    public static PlateRemovalParameterHolder setPlateParametersForRemovalFromSS2(String[] arrayPlateIds, Issue curIssue) {
+        PlateRemovalParameterHolder removePlatesParams = setBasicPlateRemovalParameterHolder(arrayPlateIds, curIssue)
+        removePlatesParams.plateWorkflowName = WorkflowName.PLATE_SS2
+        removePlatesParams.currentWorkflowName = WorkflowName.SMART_SEQ2
+        removePlatesParams.transitionName = TransitionName.REVERT_TO_READY_FOR_SS2
+        removePlatesParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_SS2
+        removePlatesParams.linkTypeName = LinkTypeName.GROUP_INCLUDES
+
+        removePlatesParams
+    }
+
+    /**
+     *
+     * @param arrayPlateIds the list of plate issue ids
+     * @param curIssue the specific issue
+     * @return PlateRemovalParameterHolder object holding all the parameters needed for removing a plate from the
+     * Submission workflow
+     */
+    public static PlateRemovalParameterHolder setPlateParametersForRemovalFromSubmission(String[] arrayPlateIds, Issue curIssue) {
+        PlateRemovalParameterHolder removePlatesParams = setBasicPlateRemovalParameterHolder(arrayPlateIds, curIssue)
+        removePlatesParams.plateWorkflowName = WorkflowName.PLATE_SS2
+        removePlatesParams.currentWorkflowName = WorkflowName.SUBMISSION
+        removePlatesParams.transitionName = TransitionName.REVERT_TO_READY_FOR_SUBMISSION
+        removePlatesParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_SUBMISSION
+        removePlatesParams.linkTypeName = LinkTypeName.GROUP_INCLUDES
+
+        removePlatesParams
+    }
+
+    private static PlateRemovalParameterHolder setBasicPlateRemovalParameterHolder(String[] arrayPlateIds, Issue curIssue) {
+        PlateRemovalParameterHolder removePlatesParams = new PlateRemovalParameterHolder()
+        removePlatesParams.currentIssue = curIssue
+        removePlatesParams.plateIdsToRemove = arrayPlateIds
+
+        removePlatesParams
+    }
 
     /**
      * Gets the transition name by the given {@Issue} and actionID of the bounded transition variables.
