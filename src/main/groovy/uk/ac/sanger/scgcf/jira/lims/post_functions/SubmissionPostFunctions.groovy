@@ -24,7 +24,7 @@ class SubmissionPostFunctions {
     public static void addPlatesToSubmission(String[] arrayPlateIds, Issue submIssue) {
 
         // get the transition action id
-        int actionId = ConfigReader.getTransitionActionId("plate_ss2", "START_SUBMISSION")
+        int actionId = ConfigReader.getTransitionActionId("Plate SS2", "START_SUBMISSION")
 
         // for each issue in list link it to this issue
         arrayPlateIds.each { String plateIdString ->

@@ -55,7 +55,7 @@ class SampleReceiptPostFunctions {
         List<IssueLink> outwardLinksList = WorkflowUtils.getOutwardLinksListForIssueId(sampleReceiptIssue.getId())
 
         // get the transition action id
-        int actionId = ConfigReader.getTransitionActionId("plate_ss2", "START_SUBMISSION")
+        int actionId = ConfigReader.getTransitionActionId("Plate SS2", "START_SUBMISSION")
 
         // for each issue linked to the sample receipt
         outwardLinksList.each { IssueLink issLink ->

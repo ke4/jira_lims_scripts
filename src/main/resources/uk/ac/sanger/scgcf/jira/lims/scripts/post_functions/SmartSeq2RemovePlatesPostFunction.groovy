@@ -41,8 +41,7 @@ if(customField != null) {
     }
 
     // link and transition the plate issue(s)
-    WorkflowUtils.removePlatesFromGivenWorkflow(arrayPlateIds, curIssue, "Smart-seq2",
-            "REVERT_TO_READY_FOR_SS2", "PltSS2 In SS2")
+    WorkflowUtils.removePlatesFromGivenWorkflow(WorkflowUtils.setPlateParametersForRemovalFromSS2(arrayPlateIds, curIssue))
 
 } else {
     LOG.error("Failed to get the plate array custom field for removing plates")

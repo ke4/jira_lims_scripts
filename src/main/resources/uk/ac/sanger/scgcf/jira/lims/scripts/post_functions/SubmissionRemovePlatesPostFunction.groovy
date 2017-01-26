@@ -39,8 +39,8 @@ if(customField != null) {
     }
 
     // link and transition the plate issue(s)
-    WorkflowUtils.removePlatesFromGivenWorkflow(arrayPlateIds, curIssue, "Submission",
-            "REVERT_TO_READY_FOR_SUBMISSION", "PltSS2 In Submission")
+    WorkflowUtils.removePlatesFromGivenWorkflow(
+            WorkflowUtils.setPlateParametersForRemovalFromSubmission(arrayPlateIds, curIssue))
 
 } else {
     LOG.error("Failed to get the plate array custom field for removing plates from a Submission")
