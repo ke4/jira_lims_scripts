@@ -8,7 +8,8 @@ package uk.ac.sanger.scgcf.jira.lims.enums
 enum SS2PlateStateName {
 
     PLATESS2_IN_SS2("PltSS2 In SS2"),
-    PLATESS2_IN_SUBMISSION("PltSS2 In Submission")
+    PLATESS2_IN_SUBMISSION("PltSS2 In Submission"),
+    PLATESS2_IN_FEEDBACK("PltSS2 In Feedback")
 
     String plateStateName
 

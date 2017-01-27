@@ -5,13 +5,13 @@ package uk.ac.sanger.scgcf.jira.lims.enums
  *
  * Created by ke4 on 25/01/2017.
  */
-enum LinkTypeName {
+enum IssueLinkTypeName {
 
     GROUP_INCLUDES("Group includes")
 
     String linkTypeName
 
-    public LinkTypeName(String linkTypeName) {
+    public IssueLinkTypeName(String linkTypeName) {
         this.linkTypeName = linkTypeName
     }
 

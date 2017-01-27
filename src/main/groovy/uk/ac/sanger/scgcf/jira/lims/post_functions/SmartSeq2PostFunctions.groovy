@@ -4,7 +4,6 @@ import com.atlassian.jira.issue.Issue
 import com.atlassian.jira.issue.MutableIssue
 import groovy.util.logging.Slf4j
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
-import uk.ac.sanger.scgcf.jira.lims.enums.IssueLinkTypeName
 import uk.ac.sanger.scgcf.jira.lims.enums.IssueStatusName
 import uk.ac.sanger.scgcf.jira.lims.enums.IssueTypeName
 import uk.ac.sanger.scgcf.jira.lims.enums.TransitionName
@@ -12,13 +11,13 @@ import uk.ac.sanger.scgcf.jira.lims.enums.WorkflowName
 import uk.ac.sanger.scgcf.jira.lims.utils.WorkflowUtils
 
 /**
- * The {@code SubmissionPostFunctions} class holds post functions for the Submissions project
+ * The {@code SmartSeq2PostFunctions} class holds post functions for the Smart-seq2 project
  *
- * Created by as28 on 09/11/2016.
+ * Created by ke4 on 26/01/2017.
  */
 
 @Slf4j(value = "LOG")
-class SubmissionPostFunctions {
+class SmartSeq2PostFunctions {
 
     /**
      * Link a list of plates to the specified Submission issue and transition them if appropriate.
@@ -26,24 +25,22 @@ class SubmissionPostFunctions {
      * @param arrayPlateIds the list of plate issue ids
      * @param submIssue the Submission issue
      */
-    public static void addPlatesToSubmission(String[] arrayPlateIds, Issue submIssue) {
+    public static void transitionPlates(String[] arrayPlateIds, WorkflowName workflowName, IssueTypeName issueTypeName,
+                                        IssueStatusName fromIssueStatusName, IssueStatusName toIssueStatusName,
+                                        TransitionName transitionName) {
 
         // get the transition action id
-        int actionId = ConfigReader.getTransitionActionId(WorkflowName.PLATE_SS2.toString(), TransitionName.START_SUBMISSION.toString())
+        int actionId = ConfigReader.getTransitionActionId(workflowName.toString(), transitionName.toString())
 
-        // for each issue in list link it to this issue
+        // transition each plate to the given state
         arrayPlateIds.each { String plateIdString ->
             Long plateIdLong = Long.parseLong(plateIdString)
-            LOG.debug("Attempting to link plate with ID ${plateIdString} to Submission with ID ${submIssue.id}".toString())
+            LOG.debug("Transition plate with ID ${plateIdString} to ${toIssueStatusName}".toString())
             MutableIssue mutableIssue = WorkflowUtils.getMutableIssueForIssueId(plateIdLong)
 
-            if(mutableIssue != null && mutableIssue.getIssueType().getName() == IssueTypeName.PLATE_SS2.toString()) {
-
-                // link the issues together
-                WorkflowUtils.createIssueLink(submIssue, mutableIssue, IssueLinkTypeName.GROUP_INCLUDES.toString())
-
+            if(mutableIssue != null && mutableIssue.getIssueType().getName() == issueTypeName.toString()) {
                 // transition the issue to 'In Submission' if it is 'Rdy for Submission'
-                if(mutableIssue.getStatus().getName() == IssueStatusName.PLATESS2_RDY_FOR_SUBMISSION.toString()) {
+                if(mutableIssue.getStatus().getName() == fromIssueStatusName.toString()) {
                     WorkflowUtils.transitionIssue(mutableIssue, actionId)
                 }
             }

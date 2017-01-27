@@ -17,7 +17,7 @@ import com.atlassian.jira.workflow.WorkflowTransitionUtil
 import com.atlassian.jira.workflow.WorkflowTransitionUtilImpl
 import com.atlassian.jira.user.ApplicationUser
 import groovy.util.logging.Slf4j
-import uk.ac.sanger.scgcf.jira.lims.enums.LinkTypeName
+import uk.ac.sanger.scgcf.jira.lims.enums.IssueLinkTypeName
 import uk.ac.sanger.scgcf.jira.lims.enums.SS2PlateStateName
 import uk.ac.sanger.scgcf.jira.lims.enums.TransitionName
 import uk.ac.sanger.scgcf.jira.lims.enums.WorkflowName
@@ -76,7 +76,7 @@ class WorkflowUtils {
         removePlatesParams.currentWorkflowName = WorkflowName.SMART_SEQ2
         removePlatesParams.transitionName = TransitionName.REVERT_TO_READY_FOR_SS2
         removePlatesParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_SS2
-        removePlatesParams.linkTypeName = LinkTypeName.GROUP_INCLUDES
+        removePlatesParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
 
         removePlatesParams
     }
@@ -94,7 +94,7 @@ class WorkflowUtils {
         removePlatesParams.currentWorkflowName = WorkflowName.SUBMISSION
         removePlatesParams.transitionName = TransitionName.REVERT_TO_READY_FOR_SUBMISSION
         removePlatesParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_SUBMISSION
-        removePlatesParams.linkTypeName = LinkTypeName.GROUP_INCLUDES
+        removePlatesParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
 
         removePlatesParams
     }
