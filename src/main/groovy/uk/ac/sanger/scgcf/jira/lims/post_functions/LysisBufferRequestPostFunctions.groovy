@@ -3,6 +3,7 @@ package uk.ac.sanger.scgcf.jira.lims.post_functions
 import com.atlassian.jira.issue.Issue
 import com.atlassian.jira.issue.MutableIssue
 import groovy.util.logging.Slf4j
+import uk.ac.sanger.scgcf.jira.lims.enums.IssueTypeName
 import uk.ac.sanger.scgcf.jira.lims.utils.WorkflowUtils
 
 /**
@@ -28,7 +29,7 @@ class LysisBufferRequestPostFunctions {
             LOG.debug("Attempting to link reagent with ID ${reagentIdString} to LBR with ID ${lbrIssue.id}".toString())
             MutableIssue reagentMutableIssue = WorkflowUtils.getMutableIssueForIssueId(reagentIdLong)
 
-            if(reagentMutableIssue != null && reagentMutableIssue.getIssueType().getName() == 'Reagent Lot or Batch') {
+            if(reagentMutableIssue != null && reagentMutableIssue.getIssueType().getName() == IssueTypeName.REAGENT_LOT_OR_BATCH.toString()) {
 
                 // link the issues together
                 LOG.debug("Calling link function in WorkflowUtils to link reagent to LBR")
