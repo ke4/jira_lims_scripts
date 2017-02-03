@@ -1,4 +1,4 @@
-package uk.ac.sanger.scgcf.jira.lims.scripts.post_functions
+package uk.ac.sanger.scgcf.jira.lims.scripts.post_functions.submission
 
 import com.atlassian.jira.component.ComponentAccessor
 import com.atlassian.jira.issue.Issue
