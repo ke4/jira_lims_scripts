@@ -64,50 +64,6 @@ class WorkflowUtils {
     }
 
     /**
-     *
-     * @param arrayPlateIds the list of plate issue ids
-     * @param curIssue the specific issue
-     * @return PlateRemovalParameterHolder object holding all the parameters needed for removing a plate from the
-     * Smart-seq2 workflow
-     */
-    public static PlateRemovalParameterHolder setPlateParametersForRemovalFromSS2(String[] arrayPlateIds, Issue curIssue) {
-        PlateRemovalParameterHolder removePlatesParams = setBasicPlateRemovalParameterHolder(arrayPlateIds, curIssue)
-        removePlatesParams.plateWorkflowName = WorkflowName.PLATE_SS2
-        removePlatesParams.currentWorkflowName = WorkflowName.SMART_SEQ2
-        removePlatesParams.transitionName = TransitionName.REVERT_TO_READY_FOR_SS2
-        removePlatesParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_SS2
-        removePlatesParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
-
-        removePlatesParams
-    }
-
-    /**
-     *
-     * @param arrayPlateIds the list of plate issue ids
-     * @param curIssue the specific issue
-     * @return PlateRemovalParameterHolder object holding all the parameters needed for removing a plate from the
-     * Submission workflow
-     */
-    public static PlateRemovalParameterHolder setPlateParametersForRemovalFromSubmission(String[] arrayPlateIds, Issue curIssue) {
-        PlateRemovalParameterHolder removePlatesParams = setBasicPlateRemovalParameterHolder(arrayPlateIds, curIssue)
-        removePlatesParams.plateWorkflowName = WorkflowName.PLATE_SS2
-        removePlatesParams.currentWorkflowName = WorkflowName.SUBMISSION
-        removePlatesParams.transitionName = TransitionName.REVERT_TO_READY_FOR_SUBMISSION
-        removePlatesParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_SUBMISSION
-        removePlatesParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
-
-        removePlatesParams
-    }
-
-    private static PlateRemovalParameterHolder setBasicPlateRemovalParameterHolder(String[] arrayPlateIds, Issue curIssue) {
-        PlateRemovalParameterHolder removePlatesParams = new PlateRemovalParameterHolder()
-        removePlatesParams.currentIssue = curIssue
-        removePlatesParams.plateIdsToRemove = arrayPlateIds
-
-        removePlatesParams
-    }
-
-    /**
      * Gets the transition name by the given {@Issue} and actionID of the bounded transition variables.
      *
      * @param issue the current issue
