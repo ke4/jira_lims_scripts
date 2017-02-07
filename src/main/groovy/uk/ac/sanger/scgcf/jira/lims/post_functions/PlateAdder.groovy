@@ -64,7 +64,7 @@ class PlateAdder {
             parameters.plateIds = arrayPlateIds
 
             // link and transition the plate issue(s)
-            WorkflowUtils.addPlatesToGivenWorkFlow(parameters)
+            WorkflowUtils.addPlatesToGivenGrouping(parameters)
 
         } else {
             LOG.error("Failed to get the plate array custom field for adding plates")

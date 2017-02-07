@@ -29,12 +29,12 @@ import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 class WorkflowUtils {
 
     /**
-     * Link a list of plates to the specified workflow issue and transition them if appropriate.
+     * Link a list of plates to the specified grouping issue and transition them if appropriate.
      *
      * @param plateActionParams a <code>PlateActionParameterHolder</code> object holding all the parameters
-     * needed for adding a plate to the given workflow
+     * needed for adding a plate to the given grouping issue
      */
-    public static void addPlatesToGivenWorkFlow(PlateActionParameterHolder plateActionParams) {
+    public static void addPlatesToGivenGrouping(PlateActionParameterHolder plateActionParams) {
         executePlateAction(
             plateActionParams,
             { Issue mutableIssue ->
@@ -47,12 +47,12 @@ class WorkflowUtils {
     }
 
     /**
-     * Remove the links between a list of plates and the specified issue and transition them if appropriate.
+     * Remove the links between a list of plates and the specified grouping issue and transition them if appropriate.
      *
      * @param plateActionParams a <code>PlateActionParameterHolder</code> object holding all the parameters
-     * needed for removing a plate from the given workflow
+     * needed for removing a plate from the given grouping issue
      */
-    public static void removePlatesFromGivenWorkflow(PlateActionParameterHolder plateActionParams) {
+    public static void removePlatesFromGivenGrouping(PlateActionParameterHolder plateActionParams) {
         executePlateAction(
                 plateActionParams,
                 { Issue mutableIssue ->
@@ -64,24 +64,20 @@ class WorkflowUtils {
         )
     }
 
+    @SuppressWarnings(value = )
     private static void executePlateAction(PlateActionParameterHolder plateActionParams, Closure actionToExecute, Closure messageClosure) {
-        // get the transition action id
         int actionId = ConfigReader.getTransitionActionId(plateActionParams.plateWorkflowName, plateActionParams.transitionName)
 
-        // for each issue in list link it to this issue
         plateActionParams.plateIds.each { String plateIdString ->
             Long plateIdLong = Long.parseLong(plateIdString)
-            String debugMsg = messageClosure(plateIdString)
-            LOG.debug(debugMsg)
+            LOG.debug((String)messageClosure(plateIdString))
 
             MutableIssue mutableIssue = getMutableIssueForIssueId(plateIdLong)
 
             if(mutableIssue != null && mutableIssue.getIssueType().getName() == plateActionParams.issueTypeName) {
 
-                // link the issues together
                 actionToExecute(mutableIssue)
 
-                // transition the issue to the right state
                 if(mutableIssue.getStatus().getName() == plateActionParams.previousPlateState) {
                     transitionIssue(mutableIssue, actionId)
                 }

@@ -65,7 +65,7 @@ class PlateRemover {
             parameters.plateIds = arrayPlateIds
 
             // link and transition the plate issue(s)
-            WorkflowUtils.removePlatesFromGivenWorkflow(parameters)
+            WorkflowUtils.removePlatesFromGivenGrouping(parameters)
 
         } else {
             LOG.error("Failed to get the plate array custom field for removing plates")
