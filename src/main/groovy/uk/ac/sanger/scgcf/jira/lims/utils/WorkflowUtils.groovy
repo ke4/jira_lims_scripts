@@ -17,10 +17,6 @@ import com.atlassian.jira.workflow.WorkflowTransitionUtil
 import com.atlassian.jira.workflow.WorkflowTransitionUtilImpl
 import com.atlassian.jira.user.ApplicationUser
 import groovy.util.logging.Slf4j
-import uk.ac.sanger.scgcf.jira.lims.enums.IssueLinkTypeName
-import uk.ac.sanger.scgcf.jira.lims.enums.SS2PlateStateName
-import uk.ac.sanger.scgcf.jira.lims.enums.TransitionName
-import uk.ac.sanger.scgcf.jira.lims.enums.WorkflowName
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 
 /**
@@ -33,30 +29,56 @@ import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 class WorkflowUtils {
 
     /**
-     * Remove the links between a list of plates and the specified issue and transition them if appropriate.
+     * Link a list of plates to the specified grouping issue and transition them if appropriate.
      *
-     * @param removePlatesParams a <code>PlateRemovalParameterHolder</code> object holding all the parameters
-     * needed for removing a plate from the given workflow
+     * @param plateActionParams a <code>PlateActionParameterHolder</code> object holding all the parameters
+     * needed for adding a plate to the given grouping issue
      */
-    public static void removePlatesFromGivenWorkflow(PlateRemovalParameterHolder removePlatesParams) {
+    public static void addPlatesToGivenGrouping(PlateActionParameterHolder plateActionParams) {
+        executePlateAction(
+            plateActionParams,
+            { Issue mutableIssue ->
+                createIssueLink(plateActionParams.currentIssue, mutableIssue, plateActionParams.linkTypeName)
+            },
+            { String plateIdString ->
+                "Attempting to link plate with ID ${plateIdString} to ${plateActionParams.currentWorkflowName} workflow with ID ${plateActionParams.currentIssue.id}".toString()
+            }
+        )
+    }
 
-        // get the transition action id
-        int actionId = ConfigReader.getTransitionActionId(removePlatesParams.plateWorkflowName, removePlatesParams.transitionName)
+    /**
+     * Remove the links between a list of plates and the specified grouping issue and transition them if appropriate.
+     *
+     * @param plateActionParams a <code>PlateActionParameterHolder</code> object holding all the parameters
+     * needed for removing a plate from the given grouping issue
+     */
+    public static void removePlatesFromGivenGrouping(PlateActionParameterHolder plateActionParams) {
+        executePlateAction(
+                plateActionParams,
+                { Issue mutableIssue ->
+                    removeIssueLink(plateActionParams.currentIssue, mutableIssue, plateActionParams.linkTypeName)
+                },
+                { String plateIdString ->
+                    "Removing link to plate with ID ${plateIdString} from ${plateActionParams.currentWorkflowName}".toString()
+                }
+        )
+    }
 
-        // for each issue in list de-link it from the Submission issue and check if state should be changed
-        removePlatesParams.plateIdsToRemove.each { String plateIdString ->
+    @SuppressWarnings(value = )
+    private static void executePlateAction(PlateActionParameterHolder plateActionParams, Closure actionToExecute, Closure messageClosure) {
+        int actionId = ConfigReader.getTransitionActionId(plateActionParams.plateWorkflowName, plateActionParams.transitionName)
+
+        plateActionParams.plateIds.each { String plateIdString ->
             Long plateIdLong = Long.parseLong(plateIdString)
-            LOG.debug("Removing link to plate with ID ${plateIdString} from ${removePlatesParams.currentWorkflowName}".toString())
+            LOG.debug((String)messageClosure(plateIdString))
 
             MutableIssue mutableIssue = getMutableIssueForIssueId(plateIdLong)
 
-            if(mutableIssue != null && mutableIssue.getIssueType().getName() == removePlatesParams.plateWorkflowName) {
+            if(mutableIssue != null && mutableIssue.getIssueType().getName() == plateActionParams.issueTypeName) {
 
-                // remove the link between the two issues
-                removeIssueLink(removePlatesParams.currentIssue, mutableIssue, removePlatesParams.linkTypeName)
+                actionToExecute(mutableIssue)
 
-                // transition the issue back to previous state
-                if(mutableIssue.getStatus().getName() == removePlatesParams.previousPlateState) {
+                if(mutableIssue.getStatus().getName() == plateActionParams.previousPlateState) {
                     transitionIssue(mutableIssue, actionId)
                 }
             }
