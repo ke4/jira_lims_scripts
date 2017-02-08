@@ -64,7 +64,6 @@ class WorkflowUtils {
         )
     }
 
-    @SuppressWarnings(value = )
     private static void executePlateAction(PlateActionParameterHolder plateActionParams, Closure actionToExecute, Closure messageClosure) {
         int actionId = ConfigReader.getTransitionActionId(plateActionParams.plateWorkflowName, plateActionParams.transitionName)
 
