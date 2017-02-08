@@ -14,5 +14,5 @@ import uk.ac.sanger.scgcf.jira.lims.post_functions.PlateAdder
  */
 Issue curIssue = issue
 
-PlateAdder plateAdder = new PlateAdder(curIssue, WorkflowName.IMD.toString(), "ADD_PLATES_TO_SUBMISSION")
+PlateAdder plateAdder = new PlateAdder(curIssue, WorkflowName.SUBMISSION.toString(), "ADD_PLATES_TO_SUBMISSION")
 plateAdder.execute()
