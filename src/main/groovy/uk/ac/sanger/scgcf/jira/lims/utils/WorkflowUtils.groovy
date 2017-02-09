@@ -65,13 +65,22 @@ class WorkflowUtils {
     }
 
     private static void executePlateAction(PlateActionParameterHolder plateActionParams, Closure actionToExecute, Closure messageClosure) {
+        LOG.debug("Attempting to fetch action ID for workflow ${plateActionParams.plateWorkflowName} and transition name ${plateActionParams.transitionName}")
         int actionId = ConfigReader.getTransitionActionId(plateActionParams.plateWorkflowName, plateActionParams.transitionName)
+
+        LOG.debug("Action ID = ${actionId}")
 
         plateActionParams.plateIds.each { String plateIdString ->
             Long plateIdLong = Long.parseLong(plateIdString)
             LOG.debug((String)messageClosure(plateIdString))
 
             MutableIssue mutableIssue = getMutableIssueForIssueId(plateIdLong)
+
+            if(mutableIssue != null) {
+                LOG.debug("Issue type = ${mutableIssue.getIssueType().getName()} and plate action issue type = ${plateActionParams.issueTypeName}")
+            } else {
+                LOG.debug("Issue null")
+            }
 
             if(mutableIssue != null && mutableIssue.getIssueType().getName() == plateActionParams.issueTypeName) {
 
