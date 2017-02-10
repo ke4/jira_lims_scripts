@@ -11,6 +11,7 @@ enum SS2PlateStateName {
     PLATESS2_IN_SS2("PltSS2 In SS2"),
     PLATESS2_IN_SUBMISSION("PltSS2 In Submission"),
     PLATESS2_IN_FEEDBACK("PltSS2 In Feedback"),
+    PLATESS2_IN_RECEIVING("PltSS2 In Receiving"),
     PLATESS2_WITH_CUSTOMER("PltSS2 With Customer"),
     PLATESS2_RDY_FOR_SUBMISSION("PltSS2 Rdy for Submission")
 
