@@ -10,7 +10,8 @@ enum WorkflowName {
     PLATE_SS2("Plate SS2"),
     SMART_SEQ2("Smart-seq2"),
     SUBMISSION("Submission"),
-    IMD("Import Declarations")
+    IMD("Import Declarations"),
+    SAMPLE_RECEIPT("Sample Receipt")
 
     String workflowName
 

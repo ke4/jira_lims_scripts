@@ -72,6 +72,25 @@ class PlateRemoverParametersCreator {
         plateActionParams
     }
 
+    /**
+     * Creates a {@code PlateActionParameterHolder} for removing a plate from the Sample Receipts workflow
+     *
+     * @param curIssue the specific issue
+     * @return PlateActionParameterHolder object holding all the parameters needed for removing a plate from the
+     * Sample Receipts workflow
+     */
+    public static PlateActionParameterHolder getSampleReceiptsParameters(Issue curIssue) {
+        PlateActionParameterHolder plateActionParams = getBasicPlateRemovalParameterHolder(curIssue)
+        plateActionParams.plateWorkflowName = WorkflowName.PLATE_SS2
+        plateActionParams.currentWorkflowName = WorkflowName.SAMPLE_RECEIPT
+        plateActionParams.transitionName = TransitionName.REVERT_TO_READY_FOR_RECEIVING
+        plateActionParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_RECEIVING
+        plateActionParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
+        plateActionParams.issueTypeName = IssueTypeName.PLATE_SS2
+
+        plateActionParams
+    }
+
     private static PlateActionParameterHolder getBasicPlateRemovalParameterHolder(Issue curIssue) {
         PlateActionParameterHolder plateActionParams = new PlateActionParameterHolder()
         plateActionParams.currentIssue = curIssue

@@ -80,6 +80,7 @@ class PlateRemover {
                 PlateRemoverParametersCreator.getIMDParameters(curIssue))
         plateRemovalParameterHolders.put(WorkflowName.SUBMISSION.toString(),
                 PlateRemoverParametersCreator.getSubmissionParameters(curIssue))
-
+        plateRemovalParameterHolders.put(WorkflowName.SAMPLE_RECEIPT.toString(),
+                PlateRemoverParametersCreator.getSampleReceiptsParameters(curIssue))
     }
 }
