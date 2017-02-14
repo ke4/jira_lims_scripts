@@ -58,7 +58,7 @@ void process( Issue curIssue ) {
 
 	def now = System.currentTimeMillis()
 	def elapsedTime = now - start
-	LOG.debug "Elapsed time in split: ${elapsedTime / 1000} seconds."
+	LOG.debug "Elapsed time in pool to tubes: ${elapsedTime / 1000} seconds."
 
 	LOG.debug "poolTubeBarcodes = ${poolTubeBarcodes}"
     LOG.debug "poolTubeDetails = ${poolTubeDetails}"

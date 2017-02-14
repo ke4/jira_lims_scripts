@@ -58,7 +58,7 @@ void process(Issue curIssue) {
 
     def now = System.currentTimeMillis()
     def elapsedTime = now - start
-    LOG.debug "Elapsed time in combined plates: ${elapsedTime / 1000} seconds."
+    LOG.debug "Elapsed time in stamp combined plates: ${elapsedTime / 1000} seconds."
 
 
     // set the barcodes custom field

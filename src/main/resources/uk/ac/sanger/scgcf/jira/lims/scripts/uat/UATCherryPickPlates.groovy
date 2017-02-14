@@ -68,7 +68,7 @@ void process( Issue curIssue ) {
 
     def now = System.currentTimeMillis()
     def elapsedTime = now - start
-    LOG.debug "Elapsed time in split: ${elapsedTime / 1000} seconds."
+    LOG.debug "Elapsed time in cherry pick: ${elapsedTime / 1000} seconds."
 
 	// set the barcodes custom field
 	JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("UAT_CHRY_PLT_BARCODE"), chryPickPlateBarcode)

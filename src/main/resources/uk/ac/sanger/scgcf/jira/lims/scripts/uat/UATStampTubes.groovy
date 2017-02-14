@@ -68,7 +68,7 @@ void process( Issue curIssue ) {
 
     def now = System.currentTimeMillis()
     def elapsedTime = now - start
-    LOG.debug "Elapsed time in split: ${elapsedTime / 1000} seconds."
+    LOG.debug "Elapsed time in stamp tubes: ${elapsedTime / 1000} seconds."
 
     LOG.debug "normTubeBarcodes = ${normTubeBarcodes}"
     LOG.debug "normTubeDetails = ${normTubeDetails}"
