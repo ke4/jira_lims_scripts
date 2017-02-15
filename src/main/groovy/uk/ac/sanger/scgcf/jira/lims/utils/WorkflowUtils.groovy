@@ -18,6 +18,7 @@ import com.atlassian.jira.workflow.WorkflowTransitionUtilImpl
 import com.atlassian.jira.user.ApplicationUser
 import groovy.util.logging.Slf4j
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
+import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
 
 /**
  * Utility class for getting Jira workflow related properties.
@@ -52,11 +53,14 @@ class WorkflowUtils {
      * @param plateActionParams a <code>PlateActionParameterHolder</code> object holding all the parameters
      * needed for removing a plate from the given grouping issue
      */
-    public static void removePlatesFromGivenGrouping(PlateActionParameterHolder plateActionParams) {
+    public static void removePlatesFromGivenGrouping(PlateActionParameterHolder plateActionParams, List<String> fieldNamesToClear) {
         executePlateAction(
                 plateActionParams,
                 { Issue mutableIssue ->
                     removeIssueLink(plateActionParams.currentIssue, mutableIssue, plateActionParams.linkTypeName)
+                    if (fieldNamesToClear) {
+                        clearFieldsValue(fieldNamesToClear, mutableIssue)
+                    }
                 },
                 { String plateIdString ->
                     "Removing link to plate with ID ${plateIdString} from ${plateActionParams.currentWorkflowName}".toString()
@@ -64,11 +68,8 @@ class WorkflowUtils {
         )
     }
 
-    private static void executePlateAction(PlateActionParameterHolder plateActionParams, Closure actionToExecute, Closure messageClosure) {
-        LOG.debug("Attempting to fetch action ID for workflow ${plateActionParams.plateWorkflowName} and transition name ${plateActionParams.transitionName}")
-        int actionId = ConfigReader.getTransitionActionId(plateActionParams.plateWorkflowName, plateActionParams.transitionName)
-
-        LOG.debug("Action ID = ${actionId}")
+    private static void executePlateAction(PlateActionParameterHolder plateActionParams, Closure actionToExecute,
+                                           Closure messageClosure) {
 
         plateActionParams.plateIds.each { String plateIdString ->
             Long plateIdLong = Long.parseLong(plateIdString)
@@ -86,7 +87,14 @@ class WorkflowUtils {
 
                 actionToExecute(mutableIssue)
 
-                if(mutableIssue.getStatus().getName() == plateActionParams.previousPlateState) {
+                String issueStatusName = mutableIssue.getStatus().getName()
+
+                if( plateActionParams.statusToTransitionMap.keySet().contains(issueStatusName))  {
+                    String transitionName = plateActionParams.statusToTransitionMap.get(issueStatusName)
+                    LOG.debug("Attempting to fetch action ID for workflow ${plateActionParams.plateWorkflowName} and transition name $transitionName")
+                    int actionId = ConfigReader.getTransitionActionId(plateActionParams.plateWorkflowName, transitionName)
+                    LOG.debug("Action ID = ${actionId}")
+
                     transitionIssue(mutableIssue, actionId)
                 }
             }
@@ -255,5 +263,11 @@ class WorkflowUtils {
         MutableIssue mutableIssue = issMngr.getIssueObject(issueId)
 
         mutableIssue
+    }
+
+    private static void clearFieldsValue(List<String> fieldNamesToClear, Issue issue) {
+        fieldNamesToClear.each { fieldName ->
+            JiraAPIWrapper.setCustomFieldValueByName(issue, fieldName, null)
+        }
     }
 }

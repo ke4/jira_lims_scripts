@@ -14,7 +14,6 @@ class PlateActionParameterHolder {
     Issue currentIssue
     String issueTypeName
     String currentWorkflowName
-    String transitionName
-    String previousPlateState
+    Map<String, String> statusToTransitionMap = new HashMap<>()
     String linkTypeName
 }

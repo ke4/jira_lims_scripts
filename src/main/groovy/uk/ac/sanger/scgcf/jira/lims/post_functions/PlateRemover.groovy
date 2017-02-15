@@ -26,11 +26,14 @@ class PlateRemover {
     String workflowName
     String customFieldName
     String[] arrayPlateIds
+    List<String> fieldNamesToClear
 
-    public PlateRemover(Issue curIssue, String workflowName, String customFieldName) {
+    public PlateRemover(Issue curIssue, String workflowName, String customFieldName,
+                        List<String> fieldNamesToClear = new ArrayList<>()) {
         this.curIssue = curIssue
         this.workflowName = workflowName
         this.customFieldName = customFieldName
+        this.fieldNamesToClear = fieldNamesToClear
 
         initPlateRemovalParameterHolders()
     }
@@ -65,7 +68,7 @@ class PlateRemover {
             parameters.plateIds = arrayPlateIds
 
             // link and transition the plate issue(s)
-            WorkflowUtils.removePlatesFromGivenGrouping(parameters)
+            WorkflowUtils.removePlatesFromGivenGrouping(parameters, fieldNamesToClear)
 
         } else {
             LOG.error("Failed to get the plate array custom field for removing plates")
