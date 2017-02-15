@@ -1,6 +1,7 @@
 package uk.ac.sanger.scgcf.jira.lims.utils
 
 import com.atlassian.jira.issue.Issue
+import uk.ac.sanger.scgcf.jira.lims.enums.DNAPlateStateName
 import uk.ac.sanger.scgcf.jira.lims.enums.IssueLinkTypeName
 import uk.ac.sanger.scgcf.jira.lims.enums.IssueTypeName
 import uk.ac.sanger.scgcf.jira.lims.enums.SS2PlateStateName
@@ -26,8 +27,8 @@ class PlateRemoverParametersCreator {
         PlateActionParameterHolder plateActionParams = getBasicPlateRemovalParameterHolder(curIssue)
         plateActionParams.plateWorkflowName = WorkflowName.PLATE_SS2
         plateActionParams.currentWorkflowName = WorkflowName.SMART_SEQ2
-        plateActionParams.transitionName = TransitionName.REVERT_TO_READY_FOR_SS2
-        plateActionParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_SS2
+        plateActionParams.statusToTransitionMap.put(
+                SS2PlateStateName.PLATESS2_IN_SS2.toString(), TransitionName.REVERT_TO_READY_FOR_SS2.toString())
         plateActionParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
         plateActionParams.issueTypeName = IssueTypeName.PLATE_SS2
 
@@ -45,8 +46,8 @@ class PlateRemoverParametersCreator {
         PlateActionParameterHolder plateActionParams = getBasicPlateRemovalParameterHolder(curIssue)
         plateActionParams.plateWorkflowName = WorkflowName.PLATE_SS2
         plateActionParams.currentWorkflowName = WorkflowName.IMD
-        plateActionParams.transitionName = TransitionName.REVERT_TO_WITH_CUSTOMER
-        plateActionParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_IMD
+        plateActionParams.statusToTransitionMap.put(
+                SS2PlateStateName.PLATESS2_IN_IMD.toString(), TransitionName.REVERT_TO_WITH_CUSTOMER.toString())
         plateActionParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
         plateActionParams.issueTypeName = IssueTypeName.PLATE_SS2
 
@@ -64,8 +65,18 @@ class PlateRemoverParametersCreator {
         PlateActionParameterHolder plateActionParams = getBasicPlateRemovalParameterHolder(curIssue)
         plateActionParams.plateWorkflowName = WorkflowName.PLATE_SS2
         plateActionParams.currentWorkflowName = WorkflowName.SUBMISSION
-        plateActionParams.transitionName = TransitionName.REVERT_TO_READY_FOR_SUBMISSION
-        plateActionParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_SUBMISSION
+
+        plateActionParams.statusToTransitionMap.put(
+                SS2PlateStateName.PLATESS2_IN_SUBMISSION.toString(), TransitionName.REVERT_TO_READY_FOR_SUBMISSION.toString())
+        plateActionParams.statusToTransitionMap.put(
+                SS2PlateStateName.PLATESS2_RDY_FOR_SS2.toString(), TransitionName.REVERT_TO_READY_FOR_SUBMISSION.toString())
+        plateActionParams.statusToTransitionMap.put(
+                SS2PlateStateName.PLATESS2_RDY_FOR_IQC.toString(), TransitionName.REVERT_TO_READY_FOR_SUBMISSION.toString())
+        plateActionParams.statusToTransitionMap.put(
+                DNAPlateStateName.PLATEDNA_RDY_FOR_IQC.toString(), TransitionName.REVERT_TO_READY_FOR_SUBMISSION.toString())
+        plateActionParams.statusToTransitionMap.put(
+                DNAPlateStateName.PLATEDNA_IN_SUBMISSION.toString(), TransitionName.REVERT_TO_READY_FOR_SUBMISSION.toString())
+
         plateActionParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
         plateActionParams.issueTypeName = IssueTypeName.PLATE_SS2
 
@@ -83,8 +94,8 @@ class PlateRemoverParametersCreator {
         PlateActionParameterHolder plateActionParams = getBasicPlateRemovalParameterHolder(curIssue)
         plateActionParams.plateWorkflowName = WorkflowName.PLATE_SS2
         plateActionParams.currentWorkflowName = WorkflowName.SAMPLE_RECEIPT
-        plateActionParams.transitionName = TransitionName.REVERT_TO_READY_FOR_RECEIVING
-        plateActionParams.previousPlateState = SS2PlateStateName.PLATESS2_IN_RECEIVING
+        plateActionParams.statusToTransitionMap.put(
+                SS2PlateStateName.PLATESS2_IN_RECEIVING.toString(), TransitionName.REVERT_TO_READY_FOR_RECEIVING.toString())
         plateActionParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
         plateActionParams.issueTypeName = IssueTypeName.PLATE_SS2
 
