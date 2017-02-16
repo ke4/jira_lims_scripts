@@ -1,14 +1,10 @@
 package uk.ac.sanger.scgcf.jira.lims.post_functions
 
-import com.atlassian.jira.component.ComponentAccessor
 import com.atlassian.jira.issue.Issue
-import com.opensymphony.workflow.InvalidInputException
 import groovy.util.logging.Slf4j
-import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.enums.WorkflowName
 import uk.ac.sanger.scgcf.jira.lims.utils.PlateActionParameterHolder
 import uk.ac.sanger.scgcf.jira.lims.utils.PlateAdderParametersCreator
-import uk.ac.sanger.scgcf.jira.lims.utils.ValidatorExceptionHandler
 import uk.ac.sanger.scgcf.jira.lims.utils.WorkflowUtils
 
 /**
@@ -19,56 +15,38 @@ import uk.ac.sanger.scgcf.jira.lims.utils.WorkflowUtils
  * Created by ke4 on 24/01/2017.
  */
 @Slf4j(value = "LOG")
-class PlateAdder {
+class PlateAdder extends BaseIssueAction {
 
     Map<String, PlateActionParameterHolder> plateActionParameterHolders
-    Issue curIssue
-    String workflowName
-    String customFieldName
+    String[] selectedValues
 
-    public PlateAdder(Issue curIssue, String workflowName, String customFieldName) {
-        this.curIssue = curIssue
-        this.workflowName = workflowName
-        this.customFieldName = customFieldName
+    public PlateAdder(Issue curIssue, String issueTypeName, String customFieldName) {
+        super(curIssue, issueTypeName, customFieldName)
 
         initPlateActionParameterHolders()
     }
 
     public void execute() {
-        if (!(curIssue != null && workflowName != null && customFieldName != null)) {
-            InvalidInputException invalidInputException =
-                    new InvalidInputException("The passed arguments are invalid."
-                        + "[curIssue: $curIssue, workflowName: $workflowName, customFieldName: $customFieldName]")
-            ValidatorExceptionHandler.throwAndLog(invalidInputException, invalidInputException.message, null)
+        validateParameters()
+
+        LOG.debug "Post-function for adding plates to $issueTypeName workflow".toString()
+
+        selectedValues = getCustomFieldValuesByName()
+
+        //if user hasn't selected anything do nothing further
+        if (selectedValues == null) {
+            LOG.debug("No items selected, nothing to do")
+            return
         }
 
-        LOG.debug "Post-function for adding plates to $workflowName workflow".toString()
+        selectedValues.each { LOG.debug "Plate ID: $it has been selected to add" }
 
-        // fetch the list of selected plates from the nFeed custom field
-        def customFieldManager = ComponentAccessor.getCustomFieldManager()
-        def customField = customFieldManager.getCustomFieldObject(ConfigReader.getCFId(customFieldName))
+        PlateActionParameterHolder parameters = plateActionParameterHolders.get(issueTypeName)
+        parameters.plateIds = selectedValues
 
-        if(customField != null) {
-            // the value of the nFeed field is an array of long issue ids for the selected plates
-            String[] arrayPlateIds = curIssue.getCustomFieldValue(customField)
+        // link and transition the plate issue(s)
+        WorkflowUtils.addPlatesToGivenGrouping(parameters)
 
-            arrayPlateIds.each { LOG.debug "Plate ID: $it has been selected to add" }
-
-            // if user hasn't selected anything do nothing further
-            if (arrayPlateIds == null) {
-                LOG.debug("No plates selected, nothing to do")
-                return
-            }
-
-            PlateActionParameterHolder parameters = plateActionParameterHolders.get(workflowName)
-            parameters.plateIds = arrayPlateIds
-
-            // link and transition the plate issue(s)
-            WorkflowUtils.addPlatesToGivenGrouping(parameters)
-
-        } else {
-            LOG.error("Failed to get the plate array custom field for adding plates")
-        }
     }
 
     private void initPlateActionParameterHolders() {

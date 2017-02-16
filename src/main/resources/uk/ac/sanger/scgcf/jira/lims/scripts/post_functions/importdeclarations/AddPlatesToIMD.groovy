@@ -3,7 +3,6 @@ package uk.ac.sanger.scgcf.jira.lims.scripts.post_functions.importdeclarations
 import com.atlassian.jira.issue.Issue
 import uk.ac.sanger.scgcf.jira.lims.enums.WorkflowName
 import uk.ac.sanger.scgcf.jira.lims.post_functions.PlateAdder
-import uk.ac.sanger.scgcf.jira.lims.post_functions.PlateRemover
 
 /**
  * This post function extracts a list of selected plates from an nFeed custom field and adds them
