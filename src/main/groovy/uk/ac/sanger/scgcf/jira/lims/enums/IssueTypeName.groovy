@@ -9,7 +9,8 @@ enum IssueTypeName {
 
     PLATE_SS2("Plate SS2"),
     REAGENT_LOT_OR_BATCH("Reagent Lot or Batch"),
-    SUBMISSION("Submission")
+    SUBMISSION("Submission"),
+    SMARTSEQ2("Smart-seq2")
 
     String issueTypeName
 

@@ -25,7 +25,6 @@ class PlateRemover {
     Issue curIssue
     String workflowName
     String customFieldName
-    String[] arrayPlateIds
 
     public PlateRemover(Issue curIssue, String workflowName, String customFieldName) {
         this.curIssue = curIssue
@@ -51,7 +50,7 @@ class PlateRemover {
 
         if(customField != null) {
             // the value of the nFeed field is an array of long issue ids for the selected plates
-            arrayPlateIds = curIssue.getCustomFieldValue(customField)
+            String[] arrayPlateIds = curIssue.getCustomFieldValue(customField)
 
             arrayPlateIds.each { LOG.debug "Plate ID: $it has been selected to remove" }
 
