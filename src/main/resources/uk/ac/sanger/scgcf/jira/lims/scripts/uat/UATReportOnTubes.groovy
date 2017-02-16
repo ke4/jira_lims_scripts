@@ -104,7 +104,7 @@ void process( Issue curIssue ) {
         if (writer != null) writer.close()
     }
 
-    def now = new Date()
+    now = new Date()
     String fileName = "report_${now.format("yyyyMMdd_HHmmss")}.txt"
     LOG.debug "fileName : ${fileName}"
 

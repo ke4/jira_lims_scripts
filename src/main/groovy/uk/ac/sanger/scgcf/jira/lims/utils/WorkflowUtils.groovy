@@ -18,6 +18,7 @@ import com.atlassian.jira.workflow.WorkflowTransitionUtilImpl
 import com.atlassian.jira.user.ApplicationUser
 import groovy.util.logging.Slf4j
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
+import uk.ac.sanger.scgcf.jira.lims.enums.IssueTypeName
 import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
 
 /**
@@ -97,6 +98,33 @@ class WorkflowUtils {
 
                     transitionIssue(mutableIssue, actionId)
                 }
+            }
+        }
+    }
+
+    /**
+     * Link a list of reagents to the specified issue.
+     *
+     * @param arrayReagentIds the list of reagent issue ids
+     * @param lbrIssue the issue to link the reagent to
+     */
+    public static void linkReagentsToGivenIssue(String[] arrayReagentIds, Issue lbrIssue, String issueTypeName) {
+        arrayReagentIds.each { String reagentIdString ->
+            Long reagentIdLong = Long.parseLong(reagentIdString)
+            LOG.debug "Attempting to link reagent with ID $reagentIdString to $issueTypeName with ID ${lbrIssue.id}".toString()
+            MutableIssue reagentMutableIssue = WorkflowUtils.getMutableIssueForIssueId(reagentIdLong)
+
+            if(reagentMutableIssue != null && reagentMutableIssue.getIssueType().getName() == IssueTypeName.REAGENT_LOT_OR_BATCH.toString()) {
+                LOG.debug "Calling link function in WorkflowUtils to link reagent to $issueTypeName".toString()
+                try {
+                    createIssueLink(lbrIssue, reagentMutableIssue, 'Uses Reagent')
+                    LOG.debug "Successfully linked reagent with ID $reagentIdString to $issueTypeName with ID ${lbrIssue.id}".toString()
+                } catch (Exception e) {
+                    LOG.error "Failed to link reagent with ID $reagentIdString to $issueTypeName with ID ${lbrIssue.id}".toString()
+                    LOG.error e.message
+                }
+            } else {
+                LOG.error "Reagent issue null or unexpected issue type when linking reagent with ID ${reagentIdString} to $issueTypeName with ID ${lbrIssue.id}".toString()
             }
         }
     }
