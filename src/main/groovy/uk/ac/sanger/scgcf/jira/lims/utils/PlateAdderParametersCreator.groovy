@@ -25,13 +25,13 @@ class PlateAdderParametersCreator {
     public static PlateActionParameterHolder getIMDParameters(Issue curIssue) {
         PlateActionParameterHolder plateActionParams = getBasicPlateActionParameterHolder(curIssue)
         plateActionParams.currentWorkflowName = WorkflowName.IMD
-        plateActionParams.transitionName = TransitionName.START_IMPORT_DECLARATION
+        plateActionParams.statusToTransitionMap.put(
+                SS2PlateStateName.PLATESS2_WITH_CUSTOMER.toString(), TransitionName.START_IMPORT_DECLARATION.toString())
         plateActionParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
 
         // TODO: these fields are plate specific but IMD handles more than one plate type e.g. Plate DNA
         plateActionParams.issueTypeName = IssueTypeName.PLATE_SS2
         plateActionParams.plateWorkflowName = WorkflowName.PLATE_SS2
-        plateActionParams.previousPlateState = SS2PlateStateName.PLATESS2_WITH_CUSTOMER
 
         plateActionParams
     }
@@ -46,13 +46,13 @@ class PlateAdderParametersCreator {
     public static PlateActionParameterHolder getSubmissionParameters(Issue curIssue) {
         PlateActionParameterHolder plateActionParams = getBasicPlateActionParameterHolder(curIssue)
         plateActionParams.currentWorkflowName = WorkflowName.SUBMISSION
-        plateActionParams.transitionName = TransitionName.START_SUBMISSION
+        plateActionParams.statusToTransitionMap.put(
+                SS2PlateStateName.PLATESS2_RDY_FOR_SUBMISSION.toString(), TransitionName.START_SUBMISSION.toString())
         plateActionParams.linkTypeName = IssueLinkTypeName.GROUP_INCLUDES
 
         // TODO: these fields are plate specific but Submissions handles more than one plate type e.g Plate DNA
         plateActionParams.issueTypeName = IssueTypeName.PLATE_SS2
         plateActionParams.plateWorkflowName = WorkflowName.PLATE_SS2
-        plateActionParams.previousPlateState = SS2PlateStateName.PLATESS2_RDY_FOR_SUBMISSION
 
         plateActionParams
     }
