@@ -66,8 +66,7 @@ void process( Issue curIssue ) {
 	String chryPickPlateBarcode, chryPickPlateDetails
 	(chryPickPlateBarcode, chryPickPlateDetails) = UATFunctions.cherryPickPlates(plateBarcodesList)
 
-    def now = System.currentTimeMillis()
-    def elapsedTime = now - start
+	def elapsedTime = System.currentTimeMillis() - start
     LOG.debug "Elapsed time in cherry pick: ${elapsedTime / 1000} seconds."
 
 	// set the barcodes custom field
