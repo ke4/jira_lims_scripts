@@ -48,12 +48,12 @@ class MatContServicesWrapperTest extends Specification {
         notThrown Exception
         sMaterialBatchPath.getClass() == String
 
-//        when: "check for presence of lims config filepath environment variable"
-//        String sJiraLimsConfigFilePath = EnvVariableAccess.getJiraLimsConfigFilePath()
-//
-//        then:
-//        notThrown Exception
-//        sJiraLimsConfigFilePath.getClass() == String
+        when: "check for presence of lims config filepath environment variable"
+        String sJiraLimsConfigFilePath = EnvVariableAccess.getJiraLimsConfigFilePath()
+
+        then:
+        notThrown Exception
+        sJiraLimsConfigFilePath.getClass() == String
     }
 
     def 'test whether can create a local labware object'() {
@@ -78,52 +78,5 @@ class MatContServicesWrapperTest extends Specification {
         assert m.getId() == "Test"
     }
 
-//    def 'test can access materials REST service'() {
-//        // TODO: this should be a select so as not to alter DB
-//        setup:
-//        Material testMat = Material.create(
-//                "test_sample",
-//                "sample",
-//                [
-//                        new Metadatum(key: "test_key", value: "test_value")
-//                ]
-//        )
-//
-//        expect:
-//        assert testMat.name == "test_sample"
-//        assert testMat.materialType.name == "sample"
-//        assert testMat.metadata[0].key == "test_key"
-//        assert testMat.metadata[0].value == "test_value"
-//        setup:
-//        MaterialType matType = MaterialType.find({it.name == 'sample'})
-//
-//        expect:
-//        matType.name == "sample"
-//    }
-
-//    def 'test can access containers REST service'() {
-//        // TODO: this should be a select so as not to alter DB
-//        setup:
-//        def extId = MockFunctions.createMockExternalId()
-//
-//        def testLw = Labware.create(
-//                new LabwareType(name: 'generic tube'),
-//                extId,
-//                [
-//                        new Metadatum(key: 'test_name', value: "test_value")
-//                ],
-//                barcodePrefix: 'UATS', barcodeInfo: 'TST'
-//        )
-//
-//        expect:
-//        assert testLw.labwareType.name == "generic tube"
-//        assert testLw.externalId == extId
-//        assert testLw.metadata[0].key == "test_name"
-//        assert testLw.metadata[0].value == "test_value"
-//        setup:
-//        LabwareType lwType = LabwareType.find({it.name == 'generic tube'})
-//
-//        expect:
-//        assert lwType.name == "generic tube"
-//    }
+    // TODO: add test covering the facade library (Material and Container service)
 }
