@@ -3,6 +3,7 @@ package uk.ac.sanger.scgcf.jira.lims.validations
 import groovy.util.logging.Slf4j
 import groovyx.net.http.Method
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
+import uk.ac.sanger.scgcf.jira.lims.configurations.JiraLimsServices
 import uk.ac.sanger.scgcf.jira.lims.exceptions.RestServiceException
 import uk.ac.sanger.scgcf.jira.lims.utils.RestService
 import uk.ac.sanger.scgcf.jira.lims.utils.ValidatorExceptionHandler
@@ -24,7 +25,8 @@ class SequencescapeValidator {
     public static String SS_STUDY_NOT_EXISTS_ERROR_MESSAGE = "The entered Sequencescape Study Name does not exist"
     public static String SS_STUDY_NOT_ACTIVE_ERROR_MESSAGE = "The entered Sequencescape Study Name is not active"
 
-    RestService restService = new RestService(ConfigReader.getSequencescapeDetails()['baseUrl'])
+    def sequencescapeDetails = ConfigReader.getServiceDetails(JiraLimsServices.SEQUENCESCAPE)
+    RestService restService = new RestService(sequencescapeDetails['baseUrl'].toString())
 
     /**
      * Validates if the given project exists in Sequencescape.
@@ -37,7 +39,7 @@ class SequencescapeValidator {
      */
     public SequencescapeEntityState validateProjectName(String projectName) throws RestServiceException {
         validateProjectOrStudyName(projectName, "project",
-            "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}")
+            "${sequencescapeDetails['apiVersion']}/${sequencescapeDetails['searchProjectByName']}")
     }
 
     /**
@@ -51,7 +53,7 @@ class SequencescapeValidator {
      */
     public SequencescapeEntityState validateStudyName(String studyName) throws RestServiceException {
         validateProjectOrStudyName(studyName, "study",
-            "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchStudyByName']}")
+            "${sequencescapeDetails['apiVersion']}/${sequencescapeDetails['searchStudyByName']}")
     }
 
     private SequencescapeEntityState validateProjectOrStudyName(String name, String type, String servicePath) {
@@ -62,7 +64,7 @@ class SequencescapeValidator {
         ]
 
         Map<?, ?> requestHeaders = [:]
-        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', sequencescapeDetails['apiKey'].toString())
         def responseMap = restService.request(Method.POST, requestHeaders, JSON, servicePath, requestBody)
         def response = responseMap['response']
         def reader = responseMap['reader']

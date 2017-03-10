@@ -41,14 +41,6 @@
     </repositories>
 
     <dependencies>
-        <!-- For Jira API libraries -->
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-api</artifactId>
-            <version>${jira.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- For Jira core libraries - N.B. need to exclude slf4j-log4j12 due to conflict -->
         <dependency>
             <groupId>com.atlassian.jira</groupId>
@@ -76,15 +68,6 @@
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <version>3.2.4</version>
-        </dependency>
-
-        <!-- For ScriptRunner plugin -->
-        <!-- To test in Intellij comment this out! -->
-        <dependency>
-            <groupId>com.onresolve.jira.groovy</groupId>
-            <artifactId>groovyrunner</artifactId>
-            <version>${scriptrunner.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--For the Materials/Container services-->

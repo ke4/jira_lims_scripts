@@ -1,7 +1,10 @@
 package uk.ac.sanger.scgcf.jira.lims.validations
 
+import spock.lang.Shared
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
+import uk.ac.sanger.scgcf.jira.lims.configurations.JiraLimsServices
 import uk.ac.sanger.scgcf.jira.lims.exceptions.RestServiceException
+import uk.ac.sanger.scgcf.jira.lims.utils.EnvVariableAccess
 import uk.ac.sanger.scgcf.jira.lims.utils.RestService
 
 import static groovyx.net.http.ContentType.JSON
@@ -13,13 +16,20 @@ import spock.lang.Specification
  */
 class SequencescapeProjectNameValidatorTest extends Specification {
 
+    @Shared sequencescapeDetails
+
+    def setupSpec() {
+        EnvVariableAccess.metaClass.static.getJiraLimsConfigFilePath = { "./src/test/resources/jira_lims_config.json" }
+        sequencescapeDetails = ConfigReader.getServiceDetails(JiraLimsServices.SEQUENCESCAPE)
+    }
+
     def "find invalid project name in Sequencescape should return false"() {
 
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         Map<?, ?> requestHeaders = [:]
-        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
-        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}"
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', sequencescapeDetails['apiKey'])
+        String servicePath = "${sequencescapeDetails['apiVersion']}/${sequencescapeDetails['searchProjectByName']}"
         String invalidProjectName = "invalid"
         def params = [
                          "search": [
@@ -53,8 +63,8 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         Map<String, String> requestHeaders = [:]
-        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
-        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}"
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', sequencescapeDetails['apiKey'])
+        String servicePath = "${sequencescapeDetails['apiVersion']}/${sequencescapeDetails['searchProjectByName']}"
         String validProjectName = "100 cycle test"
         def params = [
                 "search": [
@@ -102,8 +112,8 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         Map<String, String> requestHeaders = [:]
-        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
-        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}"
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', sequencescapeDetails['apiKey'])
+        String servicePath = "${sequencescapeDetails['apiVersion']}/${sequencescapeDetails['searchProjectByName']}"
         String validProjectName = "100 cycle test"
         def params = [
                 "search": [
@@ -151,8 +161,8 @@ class SequencescapeProjectNameValidatorTest extends Specification {
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         Map<String, String> requestHeaders = [:]
-        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
-        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchProjectByName']}"
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', sequencescapeDetails['apiKey'])
+        String servicePath = "${sequencescapeDetails['apiVersion']}/${sequencescapeDetails['searchProjectByName']}"
         String someProjectName = "some project"
         def params = [
                 "search": [

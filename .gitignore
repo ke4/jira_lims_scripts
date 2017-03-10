@@ -14,3 +14,11 @@ configs/
 
 # Logs
 logs/
+
+# Build
+build/
+
+# Other
+tmp/
+temp/
+.gradle

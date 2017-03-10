@@ -1,19 +1,33 @@
 package uk.ac.sanger.scgcf.jira.lims.configurations
 
 import spock.lang.Specification
+import uk.ac.sanger.scgcf.jira.lims.utils.EnvVariableAccess
 
 class ConfigReaderTest extends Specification {
 
-    def 'test can read config file'() {
+    def setupSpec() {
+        EnvVariableAccess.metaClass.static.getJiraLimsConfigFilePath = { "./src/test/resources/jira_lims_config.json" }
+    }
 
+    def 'test can read config file'() {
         expect: "test can read custom field aliases"
         assert ConfigReader.getCustomFieldName("UAT_CUST_TUBE_BARCODES") == "UAT cust tube barcodes"
 
         assert ConfigReader.getCustomFieldName("UAT_CUST_TUBE_DETAILS") == "UAT cust tube details"
 
         assert ConfigReader.getConfigElement(
-                ["validation", "mandatoryFields", "SeqPL: Studies", "Study", "Create"]) ==
-                [ "COST_CODE", "SEQS_PROJECT_NAME", "SEQS_STUDY_NAME"]
+                ["validation", "mandatoryFields", "ProjectName_1", "Type_1", "action_1"]) ==
+                [ "FIELD_NAME_1", "FIELD_NAME_2", "FIELD_NAME_3"]
+
+        assert ConfigReader.getConfigElement(
+                ["validation", "atLeastOneFields", "ProjectName_1", "Type_1", "action_1"]) == [
+                    [ "FIELD_NAME_1", "FIELD_NAME_2"]
+                ]
+
+        assert ConfigReader.getConfigElement(
+                ["transitions", "Type_1", "TransitionName_1", "tactionid"]) == 411
+        assert ConfigReader.getConfigElement(
+                ["transitions", "Type_1", "TransitionName_1", "tname"]) == "Transition name 1"
     }
 
     def "test methods throw NoSuchElementException when alias is not found"() {
@@ -52,5 +66,27 @@ class ConfigReaderTest extends Specification {
         then: "NoSuchElementException will be thrown"
         NoSuchElementException ex = thrown()
         ex.message == "No element found with the given keys: ${keys.toString()}".toString()
+    }
+
+    def "test reading sequencescape service config gives back the correct result"() {
+        setup:
+        def sequencescapeDetails = ConfigReader.getServiceDetails(JiraLimsServices.SEQUENCESCAPE)
+
+        expect: "Check if details are correct"
+        sequencescapeDetails['baseUrl'] == "seq_base_url"
+        sequencescapeDetails['apiVersion'] == "/api/123"
+        sequencescapeDetails['searchProjectByName'] == "searchProjectByNamePath"
+        sequencescapeDetails['searchStudyByName'] == "searchStudyByNamePath"
+    }
+
+    def "test reading barcode generator service config gives back the correct result"() {
+        setup:
+        def barcodeGeneratorDetails = ConfigReader.getServiceDetails(JiraLimsServices.BARCODE_GENERATOR)
+
+        expect: "Check if details are correct"
+        barcodeGeneratorDetails['baseUrl'] == "bargen_base_url"
+        barcodeGeneratorDetails['apiVersion'] == ""
+        barcodeGeneratorDetails['contextPath'] == "barcode-generator"
+        barcodeGeneratorDetails['getBatchOfBarcodesPath'] == "batch_barcodes"
     }
 }

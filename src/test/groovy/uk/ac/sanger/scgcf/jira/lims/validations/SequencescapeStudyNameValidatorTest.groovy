@@ -1,9 +1,12 @@
 package uk.ac.sanger.scgcf.jira.lims.validations
 
 import groovyx.net.http.Method
+import spock.lang.Shared
 import spock.lang.Specification
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
+import uk.ac.sanger.scgcf.jira.lims.configurations.JiraLimsServices
 import uk.ac.sanger.scgcf.jira.lims.exceptions.RestServiceException
+import uk.ac.sanger.scgcf.jira.lims.utils.EnvVariableAccess
 import uk.ac.sanger.scgcf.jira.lims.utils.RestService
 
 import static groovyx.net.http.ContentType.JSON
@@ -13,13 +16,20 @@ import static groovyx.net.http.ContentType.JSON
  */
 class SequencescapeStudyNameValidatorTest extends Specification {
 
+    @Shared sequencescapeDetails
+
+    def setupSpec() {
+        EnvVariableAccess.metaClass.static.getJiraLimsConfigFilePath = { "./src/test/resources/jira_lims_config.json" }
+        sequencescapeDetails = ConfigReader.getServiceDetails(JiraLimsServices.SEQUENCESCAPE)
+    }
+
     def "find invalid study name in Sequencescape should return false"() {
 
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         Map<?, ?> requestHeaders = [:]
-        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
-        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchStudyByName']}"
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', sequencescapeDetails['apiKey'])
+        String servicePath = "${sequencescapeDetails['apiVersion']}/${sequencescapeDetails['searchStudyByName']}"
         String invalidStudyName = "invalid"
         def params = [
                 "search": [
@@ -53,8 +63,8 @@ class SequencescapeStudyNameValidatorTest extends Specification {
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         Map<?, ?> requestHeaders = [:]
-        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
-        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchStudyByName']}"
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', sequencescapeDetails['apiKey'])
+        String servicePath = "${sequencescapeDetails['apiVersion']}/${sequencescapeDetails['searchStudyByName']}"
         String validStudyName = "100 cycle test"
         def params = [
                 "search": [
@@ -105,8 +115,8 @@ class SequencescapeStudyNameValidatorTest extends Specification {
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         Map<?, ?> requestHeaders = [:]
-        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
-        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchStudyByName']}"
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', sequencescapeDetails['apiKey'])
+        String servicePath = "${sequencescapeDetails['apiVersion']}/${sequencescapeDetails['searchStudyByName']}"
         String validStudyName = "100 cycle test"
         def params = [
                 "search": [
@@ -157,8 +167,8 @@ class SequencescapeStudyNameValidatorTest extends Specification {
         setup: "Create a mock RestService, its parameters and the mocked response"
         def restServiceStub = Stub(RestService)
         Map<?, ?> requestHeaders = [:]
-        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', ConfigReader.getSequencescapeDetails()['apiKey'].toString())
-        String servicePath = "${ConfigReader.getSequencescapeDetails()['apiVersion']}/${ConfigReader.getSequencescapeDetails()['searchStudyByName']}"
+        requestHeaders.put('X-SEQUENCESCAPE-CLIENT-ID', sequencescapeDetails['apiKey'])
+        String servicePath = "${sequencescapeDetails['apiVersion']}/${sequencescapeDetails['searchStudyByName']}"
         String someStudyName = "some study"
         def params = [
                 "search": [
