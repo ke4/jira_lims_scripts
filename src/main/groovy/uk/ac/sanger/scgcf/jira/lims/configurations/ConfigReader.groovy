@@ -41,7 +41,7 @@ class ConfigReader {
      * @return the section of the config map containing the sequencescape details
      */
     static def getServiceDetails(JiraLimsServices service) {
-        LOG.debug "In ConfigReader getSequencescapeDetails"
+        LOG.debug "In ConfigReader getService details for ${service.name()}"
         if(configMap == null) {
             parseConfigFile()
         }

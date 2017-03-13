@@ -2,7 +2,7 @@
   "services": {
     "barcodeGeneratorDetails": {
       "apiVersion": "",
-      "baseUrl": "bargen_base_url",
+      "baseUrl": "http://bargenBaseUrl",
       "contextPath": "barcode-generator",
       "getBatchOfBarcodesPath": "batch_barcodes",
       "getSingleBarcodePath": "barcodes",
@@ -11,7 +11,7 @@
     "sequencescapeDetails": {
       "apiKey": "apiKey",
       "apiVersion": "/api/123",
-      "baseUrl": "seq_base_url",
+      "baseUrl": "http://seq_base_url",
       "searchProjectByName": "searchProjectByNamePath",
       "searchStudyByName": "searchStudyByNamePath"
     }

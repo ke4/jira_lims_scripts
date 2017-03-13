@@ -73,7 +73,7 @@ class ConfigReaderTest extends Specification {
         def sequencescapeDetails = ConfigReader.getServiceDetails(JiraLimsServices.SEQUENCESCAPE)
 
         expect: "Check if details are correct"
-        sequencescapeDetails['baseUrl'] == "seq_base_url"
+        sequencescapeDetails['baseUrl'] == "http://seq_base_url"
         sequencescapeDetails['apiVersion'] == "/api/123"
         sequencescapeDetails['searchProjectByName'] == "searchProjectByNamePath"
         sequencescapeDetails['searchStudyByName'] == "searchStudyByNamePath"
@@ -84,7 +84,7 @@ class ConfigReaderTest extends Specification {
         def barcodeGeneratorDetails = ConfigReader.getServiceDetails(JiraLimsServices.BARCODE_GENERATOR)
 
         expect: "Check if details are correct"
-        barcodeGeneratorDetails['baseUrl'] == "bargen_base_url"
+        barcodeGeneratorDetails['baseUrl'] == "http://bargenBaseUrl"
         barcodeGeneratorDetails['apiVersion'] == ""
         barcodeGeneratorDetails['contextPath'] == "barcode-generator"
         barcodeGeneratorDetails['getBatchOfBarcodesPath'] == "batch_barcodes"
