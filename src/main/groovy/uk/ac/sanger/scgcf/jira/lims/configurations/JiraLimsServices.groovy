@@ -7,11 +7,10 @@ package uk.ac.sanger.scgcf.jira.lims.configurations
  */
 enum JiraLimsServices {
     SEQUENCESCAPE("sequencescapeDetails"),
-    BARCODE_GENERATOR("barcodeGeneratorDetails");
+    BARCODE_GENERATOR("barcodeGeneratorDetails"),
+    PRINT_MY_BARCODE("printMyBarcodeDetails");
 
     private String serviceKeyName;
-
-    private Map<String, String> serviceNameToConfigKey;
 
     JiraLimsServices(String keyName) {
         this.serviceKeyName = keyName

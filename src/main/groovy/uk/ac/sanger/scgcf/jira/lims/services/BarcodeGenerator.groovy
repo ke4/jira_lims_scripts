@@ -76,7 +76,7 @@ class BarcodeGenerator {
         responseCode = response.status
 
         if (responseCode == 503) {
-            def errorMessage = "The barcode generation failed (HTTP status code: ${response.status})."
+            def errorMessage = "The barcode generation failed (HTTP status code: $responseCode)."
             def additionalMessage= "The error message is: $reader. URL: ${restService.httpBuilder.uri}/${servicePath}, Request: $requestBody".toString()
 
             def barcodeGenerationError = new RestServiceException(errorMessage)
@@ -96,11 +96,11 @@ class BarcodeGenerator {
         )
     }
 
-    private static String singleBarcodePath() {
+    public static String singleBarcodePath() {
         "/${barcodeGeneratorDetails['getSingleBarcodePath']}".toString()
     }
 
-    private static String batchBarcodePath() {
+    public static String batchBarcodePath() {
         "/${barcodeGeneratorDetails['getBatchOfBarcodesPath']}".toString()
     }
 }
