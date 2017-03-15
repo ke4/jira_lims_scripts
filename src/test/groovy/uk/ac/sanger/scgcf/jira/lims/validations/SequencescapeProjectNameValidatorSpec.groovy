@@ -14,7 +14,7 @@ import spock.lang.Specification
 /**
  * Created by ke4 on 05/10/16.
  */
-class SequencescapeProjectNameValidatorTest extends Specification {
+class SequencescapeProjectNameValidatorSpec extends Specification {
 
     @Shared sequencescapeDetails
 

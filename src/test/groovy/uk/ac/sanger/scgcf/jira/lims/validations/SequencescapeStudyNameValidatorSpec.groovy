@@ -14,7 +14,7 @@ import static groovyx.net.http.ContentType.JSON
 /**
  * Created by ke4 on 05/10/16.
  */
-class SequencescapeStudyNameValidatorTest extends Specification {
+class SequencescapeStudyNameValidatorSpec extends Specification {
 
     @Shared sequencescapeDetails
 

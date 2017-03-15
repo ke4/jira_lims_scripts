@@ -12,7 +12,7 @@ import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
 /**
  * Created by ke4 on 08/11/16.
  */
-class AtLeastOneFieldValidatorTest extends Specification {
+class AtLeastOneFieldValidatorSpec extends Specification {
 
     def "when none of the field from the collection is filled then it throws a validation error"() {
 

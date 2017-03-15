@@ -19,7 +19,7 @@ import static groovyx.net.http.ContentType.JSON
  *
  * Created by ke4 on 08/03/2017.
  */
-class BarcodeGeneratorTest extends Specification {
+class BarcodeGeneratorSpec extends Specification {
 
     @Shared barcodeGeneratorDetails
 
