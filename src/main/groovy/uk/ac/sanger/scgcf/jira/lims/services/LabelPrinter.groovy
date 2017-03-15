@@ -36,6 +36,16 @@ class LabelPrinter {
         callPrintMyBarcode(Method.POST, requestBody, printLabelPath())
     }
 
+    /**
+     * Calling the Print My Barcode service with the given Method (POST or GET request),
+     * request body (according to the method) and URI to the end point.
+     *
+     * @param method of the request (POST or GET)
+     * @param requestBody to send to the resource's end point
+     * @param servicePath the end point of the resource
+     * @return true if the response was OK, otherwise throws an InvalidInputException to catch by Jira.
+     * Jira will pop up a modal dialog on the UI with an error message coming from the caught exception.
+     */
     private def callPrintMyBarcode(Method method, def requestBody, String servicePath) {
         LOG.debug("request body: ${requestBody.toString()}")
         def responseMap = restService.request(method, [:], JSON, servicePath, requestBody)
@@ -59,9 +69,13 @@ class LabelPrinter {
             ValidatorExceptionHandler.throwAndLog(printMyBarcodeError, errorMessage, additionalMessage)
         }
 
-        reader
+        true
     }
 
+    /**
+     * Return the print label service URI.
+     * @return the print label service URI.
+     */
     public static String printLabelPath() {
         "/${printMyBarcodeDetails['printLabelPath']}".toString()
     }
