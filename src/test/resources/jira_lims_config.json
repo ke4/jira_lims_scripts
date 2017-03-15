@@ -14,6 +14,13 @@
       "baseUrl": "http://seq_base_url",
       "searchProjectByName": "searchProjectByNamePath",
       "searchStudyByName": "searchStudyByNamePath"
+    },
+    "printMyBarcodeDetails": {
+      "apiVersion": "/v1",
+      "baseUrl": "http://PrintMyBarcodeBaseUrl",
+      "port": 4321,
+      "contextPath": "",
+      "printLabelPath": "print_jobs"
     }
   },
   "validation": {

@@ -28,7 +28,7 @@ class BarcodeGeneratorTest extends Specification {
         barcodeGeneratorDetails = ConfigReader.getServiceDetails(JiraLimsServices.BARCODE_GENERATOR)
     }
 
-    def "When barcode service is down we should receive HTTP status 503"() {
+    def "When barcode generator service is down we should receive HTTP status 503"() {
 
         setup: "Create mocked barcode service that returns HTTP 503 for each call"
         def restServiceStub = Stub(RestService)
@@ -38,7 +38,7 @@ class BarcodeGeneratorTest extends Specification {
         def responseStatus = 503
         def responseJSON = [
                 "general": [
-                        "requested action is not supported on this resource"
+                        "Service Temporarily Unavailable"
                 ]
         ]
         def responseMap = [
@@ -46,7 +46,7 @@ class BarcodeGeneratorTest extends Specification {
                 reader: responseJSON
         ]
 
-        def expected_error_message = "The request was not successful. The server responded with 501 code. The error message is: $responseJSON".toString()
+        def expected_error_message = "The request was not successful. The server responded with 503 code. The error message is: $responseJSON".toString()
 
         restServiceStub.request(Method.POST, _, JSON, _, _) >> responseMap
 
