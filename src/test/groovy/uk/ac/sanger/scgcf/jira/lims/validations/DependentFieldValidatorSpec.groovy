@@ -12,7 +12,7 @@ import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
 /**
  * Created by ke4 on 08/11/16.
  */
-class DependentFieldValidatorTest extends Specification {
+class DependentFieldValidatorSpec extends Specification {
 
     def "when the dependent field is not filled in then it throws a validation error"() {
 

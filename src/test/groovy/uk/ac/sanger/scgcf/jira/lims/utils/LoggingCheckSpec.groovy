@@ -5,7 +5,7 @@ import spock.lang.Specification
 /**
  * Created by as28 on 13/07/16.
  */
-class LoggingCheckTest extends Specification {
+class LoggingCheckSpec extends Specification {
     def "test execute logging check"() {
 
         setup: "Create a logging check class instance"

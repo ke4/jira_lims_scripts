@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jira_lims_scripts</groupId>
     <artifactId>jira_lims_scripts</artifactId>
-    <version>1.13.0</version>
+    <version>1.14.0</version>
 
     <!-- To output to plugin format use atlassian-plugin packaging -->
     <packaging>atlassian-plugin</packaging>
@@ -41,14 +41,6 @@
     </repositories>
 
     <dependencies>
-        <!-- For Jira API libraries -->
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-api</artifactId>
-            <version>${jira.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- For Jira core libraries - N.B. need to exclude slf4j-log4j12 due to conflict -->
         <dependency>
             <groupId>com.atlassian.jira</groupId>
@@ -76,15 +68,6 @@
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <version>3.2.4</version>
-        </dependency>
-
-        <!-- For ScriptRunner plugin -->
-        <!-- To test in Intellij comment this out! -->
-        <dependency>
-            <groupId>com.onresolve.jira.groovy</groupId>
-            <artifactId>groovyrunner</artifactId>
-            <version>${scriptrunner.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!--For the Materials/Container services-->

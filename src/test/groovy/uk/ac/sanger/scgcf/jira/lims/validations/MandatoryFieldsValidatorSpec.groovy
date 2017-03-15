@@ -12,7 +12,7 @@ import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
 /**
  * Created by ke4 on 05/10/16.
  */
-class MandatoryFieldsValidatorTest extends Specification {
+class MandatoryFieldsValidatorSpec extends Specification {
 
     def "not filled mandatory fields should return an InvalidInputException"() {
 

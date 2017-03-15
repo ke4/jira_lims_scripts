@@ -1,0 +1,102 @@
+{
+  "services": {
+    "barcodeGeneratorDetails": {
+      "apiVersion": "",
+      "baseUrl": "http://bargenBaseUrl",
+      "contextPath": "barcode-generator",
+      "getBatchOfBarcodesPath": "batch_barcodes",
+      "getSingleBarcodePath": "barcodes",
+      "port": 1234
+    },
+    "sequencescapeDetails": {
+      "apiKey": "apiKey",
+      "apiVersion": "/api/123",
+      "baseUrl": "http://seq_base_url",
+      "searchProjectByName": "searchProjectByNamePath",
+      "searchStudyByName": "searchStudyByNamePath"
+    }
+  },
+  "validation": {
+    "mandatoryFields": {
+      "ProjectName_1": {
+        "Type_1": {
+          "action_1": [
+            "FIELD_NAME_1",
+            "FIELD_NAME_2",
+            "FIELD_NAME_3"
+          ],
+          "action_2": [
+            "FIELD_NAME_1"
+          ],
+          "action_3": [
+            "FIELD_NAME_1"
+          ]
+        }
+      },
+      "ProjectName_2": {
+        "Type_2": {
+          "action_1": [
+            "CURRENT_SMART-FIELD_NAME_1"
+          ],
+          "action_2": [
+            "FIELD_NAME_1",
+            "FIELD_NAME_2",
+            "FIELD_NAME_3"
+          ],
+          "action_3": [
+            "FIELD_NAME_1"
+          ]
+        }
+      }
+    },
+    "dependentFields": {
+
+    },
+    "atLeastOneFields": {
+      "ProjectName_1": {
+        "Type_1": {
+          "action_1": [
+            [
+              "FIELD_NAME_1",
+              "FIELD_NAME_2"
+            ]
+          ]
+        }
+      }
+    }
+  },
+  "transitions": {
+    "Type_1": {
+      "TransitionName_1": {
+        "tactionid": 411,
+        "tname": "Transition name 1"
+      },
+      "TransitionName_2": {
+        "tactionid": 541,
+        "tname": "Transition name 2"
+      },
+      "TransitionName_3": {
+        "tactionid": 221,
+        "tname": "Transition name 3"
+      }
+    },
+    "Type_2": {
+      "TransitionName_1": {
+        "tactionid": 91,
+        "tname": "Transition name 4"
+      }
+    }
+  },
+  "custom_fields": {
+    "UAT_CUST_TUBE_BARCODES": {
+      "cfidstring": "customfield_11401",
+      "cfid": 11401,
+      "cfname": "UAT cust tube barcodes"
+    },
+    "UAT_CUST_TUBE_DETAILS": {
+      "cfidstring": "customfield_11402",
+      "cfid": 11402,
+      "cfname": "UAT cust tube details"
+    }
+  }
+}
