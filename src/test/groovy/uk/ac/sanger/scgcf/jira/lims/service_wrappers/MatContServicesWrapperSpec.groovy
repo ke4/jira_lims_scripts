@@ -10,7 +10,7 @@ import uk.ac.sanger.scgcf.jira.services.models.Material
 //import uk.ac.sanger.scgcf.jira.services.models.MaterialType
 //import uk.ac.sanger.scgcf.jira.services.models.Metadatum
 
-class MatContServicesWrapperTest extends Specification {
+class MatContServicesWrapperSpec extends Specification {
 
     def 'test environment variables are present and set'() {
 

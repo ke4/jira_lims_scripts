@@ -3,7 +3,7 @@ package uk.ac.sanger.scgcf.jira.lims.configurations
 import spock.lang.Specification
 import uk.ac.sanger.scgcf.jira.lims.utils.EnvVariableAccess
 
-class ConfigReaderTest extends Specification {
+class ConfigReaderSpec extends Specification {
 
     def setupSpec() {
         EnvVariableAccess.metaClass.static.getJiraLimsConfigFilePath = { "./src/test/resources/jira_lims_config.json" }
