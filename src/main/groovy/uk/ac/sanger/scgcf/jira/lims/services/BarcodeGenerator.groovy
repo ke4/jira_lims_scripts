@@ -44,7 +44,6 @@ class BarcodeGenerator {
             "prefix": barcodePrefix,
             "info": infoText
         ]
-
         callBarcodeGenerator(Method.POST, requestBody, singleBarcodePath())["fullBarcode"]
     }
 
@@ -87,20 +86,44 @@ class BarcodeGenerator {
         reader
     }
 
-    private static String getBarcodeGeneratorServicePath() {
-        String.format("%s:%s/%s%s",
+    /**
+     * Returns the URI for BarcodeGenerator service.
+     * @return the URI for BarcodeGenerator service.
+     */
+    public static String getBarcodeGeneratorServicePath() {
+        String.format("%s:%s",
             barcodeGeneratorDetails['baseUrl'],
-            barcodeGeneratorDetails['port'],
-            barcodeGeneratorDetails['contextPath'],
-            barcodeGeneratorDetails['apiVersion'],
+            barcodeGeneratorDetails['port']
         )
     }
 
-    public static String singleBarcodePath() {
-        "/${barcodeGeneratorDetails['getSingleBarcodePath']}".toString()
+    /**
+     * Returns the context path.
+     *
+     * @return the context path.
+     */
+    public static String getContextPath() {
+        String.format("%s%s",
+            barcodeGeneratorDetails['contextPath'],
+            barcodeGeneratorDetails['apiVersion']
+        )
     }
 
+    /**
+     * Returns the URI for generating a single barcode.
+     *
+     * @return the URI for generating a single barcode.
+     */
+    public static String singleBarcodePath() {
+        "/${getContextPath()}/${barcodeGeneratorDetails['getSingleBarcodePath']}".toString()
+    }
+
+    /**
+     * Returns the URI for generating a batch of barcodes.
+     *
+     * @return the URI for generating a batch of barcodes.
+     */
     public static String batchBarcodePath() {
-        "/${barcodeGeneratorDetails['getBatchOfBarcodesPath']}".toString()
+        "/${getContextPath()}/${barcodeGeneratorDetails['getBatchOfBarcodesPath']}".toString()
     }
 }

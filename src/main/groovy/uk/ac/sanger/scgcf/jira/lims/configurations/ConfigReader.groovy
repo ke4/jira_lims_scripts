@@ -2,6 +2,7 @@ package uk.ac.sanger.scgcf.jira.lims.configurations
 
 import groovy.json.JsonSlurper
 import groovy.util.logging.Slf4j
+import uk.ac.sanger.scgcf.jira.lims.post_functions.labelprinting.LabelTemplates
 import uk.ac.sanger.scgcf.jira.lims.utils.EnvVariableAccess
 
 import java.nio.file.Paths
@@ -40,13 +41,31 @@ class ConfigReader {
      * Gets the SequenceScape section of the configuration
      * @return the section of the config map containing the sequencescape details
      */
+    static def getLabeltemplateDetails(LabelTemplates template) {
+        checkConfigFileAvailability("In ConfigReader get label template details for ${template.type}")
+
+        configMap['labelTemplateDetails'][template.type]
+    }
+
+    /**
+     * Gets the given service section of the configuration
+     * @return the section of the config map containing the given service's details
+     */
     static def getServiceDetails(JiraLimsServices service) {
-        LOG.debug "In ConfigReader getService details for ${service.name()}"
-        if(configMap == null) {
-            parseConfigFile()
-        }
+        checkConfigFileAvailability("In ConfigReader getService details for ${service.name()}")
 
         configMap['services'][service.getServiceKey()]
+    }
+
+    /**
+     * Checks whether the printing is ON or OFF.
+     *
+     * @return true if the setting for printing is turned on, otherwise returns false.
+     */
+    static boolean isLabelPrintingOn() {
+        checkConfigFileAvailability("In ConfigReader - check printing availability")
+
+        configMap['services'][JiraLimsServices.PRINT_MY_BARCODE.toString()]['printingOn'] == true
     }
 
     /**
@@ -56,10 +75,7 @@ class ConfigReader {
      * if there is no element belongs to the given keys
      */
     static def getConfigElement(List<String> keys) {
-        LOG.debug "In ConfigReader getConfigElement"
-        if(configMap == null) {
-            parseConfigFile()
-        }
+        checkConfigFileAvailability("In ConfigReader getConfigElement")
 
         def element = null
         def tmpConfigMap = configMap
@@ -82,10 +98,7 @@ class ConfigReader {
      * @return the name of the queried custom field
      */
     static String getCustomFieldName(String cfAlias) {
-        LOG.debug("In ConfigReader getCustomFieldName with alias <${cfAlias}>".toString())
-        if(configMap == null) {
-            parseConfigFile()
-        }
+        checkConfigFileAvailability("In ConfigReader getCustomFieldName with alias <${cfAlias}>".toString())
 
         String cfName = null
         def element = configMap['custom_fields'][cfAlias]
@@ -107,10 +120,7 @@ class ConfigReader {
      * @return the id number of the custom field
      */
     static long getCFId(String cfAlias) {
-        LOG.debug("In ConfigReader getCFId with alias <${cfAlias}>".toString())
-        if(configMap == null) {
-            parseConfigFile()
-        }
+        checkConfigFileAvailability("In ConfigReader getCFId with alias <${cfAlias}>".toString())
 
         long cfId = -1
         def element = configMap['custom_fields'][cfAlias]
@@ -132,10 +142,7 @@ class ConfigReader {
      * @return the id string for the custom field e.g. customfield_12345
      */
     static String getCFIdString(String cfAlias) {
-        LOG.debug "In ConfigReader getCFIdString with alias ${cfAlias}"
-        if(configMap == null) {
-            parseConfigFile()
-        }
+        checkConfigFileAvailability("In ConfigReader getCFIdString with alias ${cfAlias}")
 
         String cfIdString = null
         def element = configMap['custom_fields'][cfAlias]
@@ -161,5 +168,13 @@ class ConfigReader {
     static int getTransitionActionId(String workflowName, String transitionAlias) {
         int actionId = getConfigElement(["transitions", workflowName, transitionAlias, "tactionid"]) as int
         actionId
+    }
+
+    private static void checkConfigFileAvailability(String message) {
+        LOG.debug message
+
+        if (configMap == null) {
+            parseConfigFile()
+        }
     }
 }

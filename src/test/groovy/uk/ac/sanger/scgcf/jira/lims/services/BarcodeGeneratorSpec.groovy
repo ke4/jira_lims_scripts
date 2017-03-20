@@ -70,7 +70,7 @@ class BarcodeGeneratorSpec extends Specification {
         def info = "IFO"
         def number = 999
 
-        String generateSingleBarcodePath = "/${barcodeGeneratorDetails['getSingleBarcodePath']}"
+        String generateSingleBarcodePath = BarcodeGenerator.singleBarcodePath()
         Map<?, ?> requestHeaders = [:]
 
         def responseStatus = 200
@@ -112,7 +112,7 @@ class BarcodeGeneratorSpec extends Specification {
                 "info": info,
                 "prefix": prefix
         ]
-        String generateSingleBarcodePath = "/${barcodeGeneratorDetails['getSingleBarcodePath']}"
+        String generateSingleBarcodePath = BarcodeGenerator.singleBarcodePath()
         Map<?, ?> requestHeaders = [:]
 
 
@@ -153,7 +153,7 @@ class BarcodeGeneratorSpec extends Specification {
                 "prefix": prefix,
                 "numberOfBarcodes": numberOfBarcodes
         ]
-        String generateBatchBarcodesPath = "/${barcodeGeneratorDetails['getBatchOfBarcodesPath']}"
+        String generateBatchBarcodesPath = BarcodeGenerator.batchBarcodePath()
         Map<?, ?> requestHeaders = [:]
 
 
