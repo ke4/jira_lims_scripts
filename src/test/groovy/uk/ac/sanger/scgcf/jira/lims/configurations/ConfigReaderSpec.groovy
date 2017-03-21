@@ -89,4 +89,12 @@ class ConfigReaderSpec extends Specification {
         barcodeGeneratorDetails['contextPath'] == "barcode-generator"
         barcodeGeneratorDetails['getBatchOfBarcodesPath'] == "batch_barcodes"
     }
+
+    def "when label printing set to off, then we should get false from the config file setting"() {
+        setup:
+        def labelPrintingSwitch = ConfigReader.isLabelPrintingOn()
+
+        expect:
+        labelPrintingSwitch
+    }
 }

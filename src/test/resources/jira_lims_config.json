@@ -20,7 +20,21 @@
       "baseUrl": "http://PrintMyBarcodeBaseUrl",
       "port": 4321,
       "contextPath": "",
-      "printLabelPath": "print_jobs"
+      "printLabelPath": "print_jobs",
+      "printingOn": true,
+      "barcodePrefix": "SCGC"
+    }
+  },
+  "labelTemplateDetails": {
+    "Library Pool Tube": {
+      "barcodeInfo": "LPL",
+      "id": 104,
+      "name": "lib_pool_template_v12"
+    },
+    "SS2 Lysis Buffer": {
+      "barcodeInfo": "SS2",
+      "id": 12,
+      "name": "plate_template"
     }
   },
   "validation": {

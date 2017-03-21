@@ -21,11 +21,18 @@ import static groovyx.net.http.ContentType.JSON
 class LabelPrinter {
 
     def static printMyBarcodeDetails = ConfigReader.getServiceDetails(JiraLimsServices.PRINT_MY_BARCODE)
+    boolean isLabelPrintingOn = ConfigReader.isLabelPrintingOn()
     RestService restService = new RestService(getPrintMyBarcodeServicePath())
     def responseCode
 
     /**
      * Print a given label calling the Print My Barcode service.
+     *
+     * @note Currently the Print My Barcode application does not support offline printing mode.
+     * It always sends the request to printer. Printing a label is expensive, so we added a setting
+     * to our config file to be able to turn off label printing. If the printing is turned off this service
+     * won't call the Print My Barcode application for the above reason, it will just respond with {code true} value.
+     * We have requested a feature change from the Print My Barcode team for the above purpose.
      *
      * @param requestBody contains the body of the request,
      * which consists of a header, footer and the labels sections.
@@ -33,7 +40,12 @@ class LabelPrinter {
      * @return the response body of the REST call
      */
     public def printLabel(def requestBody) {
-        callPrintMyBarcode(Method.POST, requestBody, printLabelPath())
+        if (isLabelPrintingOn) {
+            callPrintMyBarcode(Method.POST, requestBody, printLabelPath())
+        } else {
+            // @see documentation
+            true
+        }
     }
 
     /**
@@ -77,15 +89,29 @@ class LabelPrinter {
      * @return the print label service URI.
      */
     public static String printLabelPath() {
-        "/${printMyBarcodeDetails['printLabelPath']}".toString()
+        "${getContextPath()}/${printMyBarcodeDetails['printLabelPath']}".toString()
     }
 
-    private static String getPrintMyBarcodeServicePath() {
-        String.format("%s:%s/%s%s",
-                printMyBarcodeDetails['baseUrl'],
-                printMyBarcodeDetails['port'],
-                printMyBarcodeDetails['contextPath'],
-                printMyBarcodeDetails['apiVersion'],
+    /**
+     * Returns the context path.
+     *
+     * @return the context path.
+     */
+    public static String getContextPath() {
+        String.format("%s%s",
+            printMyBarcodeDetails['contextPath'],
+            printMyBarcodeDetails['apiVersion']
+        )
+    }
+
+    /**
+     * Returns the URI for Print My Barcode service.
+     * @return the URI for Print My Barcode service.
+     */
+    public static String getPrintMyBarcodeServicePath() {
+        String.format("%s:%s",
+            printMyBarcodeDetails['baseUrl'],
+            printMyBarcodeDetails['port']
         )
     }
 }

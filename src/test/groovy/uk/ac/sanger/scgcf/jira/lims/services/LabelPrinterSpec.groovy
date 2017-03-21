@@ -14,7 +14,7 @@ import static groovyx.net.http.ContentType.JSON
 /**
  * Created by ke4 on 14/03/2017.
  */
-class LabelPrintSpec extends Specification {
+class LabelPrinterSpec extends Specification {
 
     @Shared printMyBarcodeDetails
 
