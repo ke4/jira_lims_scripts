@@ -38,8 +38,8 @@ class ConfigReader {
     }
 
     /**
-     * Gets the SequenceScape section of the configuration
-     * @return the section of the config map containing the sequencescape details
+     * Gets the label template section of the configuration
+     * @return the section of the config map containing the label template details
      */
     static def getLabeltemplateDetails(LabelTemplates template) {
         checkConfigFileAvailability("In ConfigReader get label template details for ${template.type}")
