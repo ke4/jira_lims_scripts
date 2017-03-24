@@ -12,6 +12,8 @@ import uk.ac.sanger.scgcf.jira.lims.utils.RestService
 import static groovyx.net.http.ContentType.JSON
 
 /**
+ * Specifications for generating labels for plate
+ *
  * Created by ke4 on 17/03/2017.
  */
 class PlateLabelGeneratorSpec extends Specification {
@@ -23,7 +25,7 @@ class PlateLabelGeneratorSpec extends Specification {
         barcodeGeneratorDetails = ConfigReader.getServiceDetails(JiraLimsServices.BARCODE_GENERATOR)
     }
 
-    def "when calling createLabel method then generates the proper label"() {
+    def "when calling createLabel method for SS2 Lysis Buffer request then generates the proper label"() {
 
         setup:
         String printerName = "abcd123"
@@ -82,7 +84,7 @@ class PlateLabelGeneratorSpec extends Specification {
         plateLabelGenerator.createLabel() == expectedLabel
     }
 
-    def "when calling createLabel method for 4 plates then generates the proper label"() {
+    def "when calling createLabel method for 4 plates for SS2 Lysis Buffer request then generates the proper label"() {
 
         setup:
         String printerName = "abcd123"
@@ -114,9 +116,6 @@ class PlateLabelGeneratorSpec extends Specification {
                 ]
             ]
         ]
-
-        println "BARCODES:" + barcodes
-        println "EXPECTED LABEL:" + expectedLabel
 
         def restServiceStub = Stub(RestService)
 

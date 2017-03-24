@@ -6,36 +6,37 @@ import uk.ac.sanger.scgcf.jira.lims.configurations.JiraLimsServices
 import uk.ac.sanger.scgcf.jira.lims.post_functions.labelprinting.templates.LabelJsonCreator
 import uk.ac.sanger.scgcf.jira.lims.services.BarcodeGenerator
 
+import java.time.LocalDate
+
 /**
- * Generates a plate label for sending it to print with a label printer.
+ * Generates a tube label for sending it to print with a label printer.
  *
  * Created by ke4 on 15/03/2017.
  */
 @Slf4j(value="LOG")
-class PlateLabelGenerator implements LabelGenerator {
+class TubeLabelGenerator implements LabelGenerator {
 
     String printerName
     int numberOfLabels
     def templateJson
     LabelTemplates labelTemplate
-    Map<String, LabelTemplates> plateLabelJsonCreators
+    Map<String, LabelTemplates> tubeLabelJsonCreators
     String barcodePrefix
     String barcodeInfo
     def labelData
     List<String> barcodes = new ArrayList<>()
     BarcodeGenerator barcodeGenerator
+    String today = LocalDate.now().toString()
 
     /**
-     * Constructor for {@code PlateLabelGenerator}.
+     * Constructor for {@code TubeLabelGenerator}.
      *
      * @param printerName the name of the printer to print with
-     * @param numberOfLabels the number of label to print
      * @param labelTemplate the template to use to print the label(s)
      * @param labelData contains the data to print on the label
      */
-    PlateLabelGenerator(String printerName, int numberOfLabels, LabelTemplates labelTemplate, def labelData) {
+    TubeLabelGenerator(String printerName, LabelTemplates labelTemplate, def labelData) {
         this.printerName = printerName
-        this.numberOfLabels = numberOfLabels
         this.labelTemplate = labelTemplate
         this.labelData = labelData
 
@@ -46,16 +47,28 @@ class PlateLabelGenerator implements LabelGenerator {
 
     /**
      * Creates the label to print.
-     * Generates the given number of barcodes (the number of the plates). It iterates throught
+     * Generates the given number of barcodes (the number of the tubes). It iterates throught
      * the generated barcodes and creates a label using them, then it returns the
      * assembled labels ready to print with the given label printer.
      *
      * @return assembled JSON ready for printing with the selected label printer.
      */
     public def createLabel() {
+        calculateNumberOfLabels()
         generateBarcode()
 
-        labelData['barcodes'] = barcodes
+        def tempLabelData = [:]
+        tempLabelData['barcodes'] = [:]
+        int startIndex = 0
+        labelData.barcodes.collect { parentBarcode, value ->
+            int plexity = value.plexity
+            tempLabelData.barcodes[parentBarcode] = barcodes.subList(startIndex, startIndex + plexity)
+            startIndex += plexity
+        }
+
+        labelData.barcodes = tempLabelData.barcodes
+        labelData.today = today
+        labelData.infoText = barcodeInfo
 
         LOG.debug("labelData: ${labelData.toString()}")
 
@@ -69,6 +82,12 @@ class PlateLabelGenerator implements LabelGenerator {
         templateJson
     }
 
+    private void calculateNumberOfLabels() {
+        numberOfLabels = labelData.barcodes.collect { parentBarcode, value ->
+            value.plexity
+        }.sum()
+    }
+
     private void generateBarcode() {
         if (numberOfLabels == 1) {
             barcodes.add(barcodeGenerator.generateSingleBarcode(barcodePrefix, barcodeInfo))
@@ -78,7 +97,7 @@ class PlateLabelGenerator implements LabelGenerator {
     }
 
     private initBarcodeProperties() {
-        Map<String, String> labelTemplateDetails = (Map<String, String>) ConfigReader.getLabeltemplateDetails(LabelTemplates.SS2_LYSIS_BUFFER)
+        Map<String, String> labelTemplateDetails = (Map<String, String>) ConfigReader.getLabeltemplateDetails(LabelTemplates.LIBRARY_POOL_TUBE)
 
         def labelTemplateId = labelTemplateDetails.id
 
@@ -98,8 +117,8 @@ class PlateLabelGenerator implements LabelGenerator {
         barcodePrefix = printMyBarcodeDetails["barcodePrefix"]
         barcodeInfo = labelTemplateDetails["barcodeInfo"]
 
-        plateLabelJsonCreators = new HashMap<>()
-        plateLabelJsonCreators.put(LabelTemplates.SS2_LYSIS_BUFFER.type, LabelTemplates.SS2_LYSIS_BUFFER)
+        tubeLabelJsonCreators = new HashMap<>()
+        tubeLabelJsonCreators.put(LabelTemplates.LIBRARY_POOL_TUBE.type, LabelTemplates.LIBRARY_POOL_TUBE)
     }
 
 

@@ -12,29 +12,19 @@ import uk.ac.sanger.scgcf.jira.lims.services.LabelPrinter
 @Slf4j(value = "LOG")
 class PrintLabelAction implements IssueAction {
 
-    String printerName
-    int numberOfLabels
-    LabelTemplates labelTemplate
-    def labelData
+    LabelGenerator labelGenerator
 
     /**
      * Constructor for {@code PrintLabelAction}.
      *
-     * @param printerName the name of the printer to print
-     * @param numberOfLabels the number of label to print
-     * @param labelTemplate the template to use to print the label(s)
-     * @param labelData contains the data to print on the label
+     * @param labelGenerator for generating label(s) to send to the label printer
      */
-    PrintLabelAction(String printerName, int numberOfLabels, LabelTemplates labelTemplate, def labelData) {
-        this.printerName = printerName
-        this.numberOfLabels = numberOfLabels
-        this.labelTemplate = labelTemplate
-        this.labelData = labelData
+    PrintLabelAction(LabelGenerator labelGenerator) {
+        this.labelGenerator = labelGenerator
     }
 
     @Override
     public void execute() {
-        PlateLabelGenerator labelGenerator = new PlateLabelGenerator(printerName, numberOfLabels, labelTemplate, labelData)
         def labelToPrint = labelGenerator.createLabel()
 
         LOG.debug("Label to print: ${labelToPrint.toString()}")
