@@ -39,8 +39,7 @@ def labelData = [:]
 //                "plexity": 3,
 //                "barcodes": [] // not mandatory, but it could contain the already created barcodes (re-print)
 //            ]
-//    ],
-//    'infoText': infoText
+//    ]
 //]
 // You have to gather the above data from the linked source plate ticket(s)!!!!
 

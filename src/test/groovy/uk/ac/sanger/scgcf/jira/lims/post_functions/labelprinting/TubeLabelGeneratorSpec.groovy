@@ -17,7 +17,7 @@ import static groovyx.net.http.ContentType.JSON
 
 /**
  * Specifications generating label templates for tube(s).
- * 
+ *
  * Created by ke4 on 23/03/2017.
  */
 class TubeLabelGeneratorSpec extends Specification {
