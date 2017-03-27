@@ -4,8 +4,9 @@ import com.atlassian.jira.bc.issue.IssueService
 import com.atlassian.jira.component.ComponentAccessor
 import com.atlassian.jira.issue.CustomFieldManager
 import com.atlassian.jira.issue.Issue
-import com.atlassian.jira.issue.IssueInputParameters
+import com.atlassian.jira.issue.ModifiedValue
 import com.atlassian.jira.issue.fields.CustomField
+import com.atlassian.jira.issue.util.DefaultIssueChangeHolder
 import com.atlassian.jira.security.JiraAuthenticationContext
 import com.atlassian.jira.user.ApplicationUser
 import groovy.util.logging.Slf4j
@@ -85,6 +86,7 @@ class JiraAPIWrapper {
             return
         }
         LOG.debug "user : ${user.getName()}"
+        LOG.debug "issue: ${curIssue.getKey()}"
 
         // locate the custom field for the current issue from its name
         def tgtField = getCustomFieldManager().getCustomFieldObjects(curIssue).find { it.name == cfName }
@@ -95,24 +97,10 @@ class JiraAPIWrapper {
         }
 
         // update the value of the field and save the change in the database
-        IssueInputParameters issueInputParameters = issueService.newIssueInputParameters()
         LOG.debug "setCustomFieldValueByName: tgtField ID : ${tgtField.getId()}"
 
-        issueInputParameters.addCustomFieldValue(tgtField.getId(), newValue)
-
-        IssueService.UpdateValidationResult updateValidationResult = issueService.validateUpdate(user, curIssue.getId(), issueInputParameters)
-
-        if (updateValidationResult.isValid()) {
-            LOG.debug "setCustomFieldValueByName: Issue update validated, running update"
-            IssueService.IssueResult updateResult = issueService.update(user, updateValidationResult);
-            if (!updateResult.isValid()) {
-                LOG.error "setCustomFieldValueByName: Custom field with name <${cfName}> could not be updated to value <${newValue}>"
-                // TODO: error handling
-            }
-        } else {
-            LOG.error "setCustomFieldValueByName: updateValidationResult false, custom field with name <${cfName}> could not be updated to value <${newValue}>"
-            // TODO: error handling
-        }
+        tgtField.updateValue(null, curIssue, new ModifiedValue(curIssue.getCustomFieldValue(tgtField), newValue),
+                new DefaultIssueChangeHolder());
     }
 
     /**

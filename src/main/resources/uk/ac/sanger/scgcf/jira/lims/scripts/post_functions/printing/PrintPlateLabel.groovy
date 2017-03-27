@@ -5,9 +5,12 @@ import groovy.transform.Field
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
+import uk.ac.sanger.scgcf.jira.lims.post_functions.labelprinting.LabelGenerator
 import uk.ac.sanger.scgcf.jira.lims.post_functions.labelprinting.LabelTemplates
+import uk.ac.sanger.scgcf.jira.lims.post_functions.labelprinting.PlateLabelGenerator
 import uk.ac.sanger.scgcf.jira.lims.post_functions.labelprinting.PrintLabelAction
 import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
+import uk.ac.sanger.scgcf.jira.lims.services.BarcodeGenerator
 
 /**
  * This script sends plate label(s) for printing to the given label printer.
@@ -25,7 +28,18 @@ String printerName = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigRe
 int numberOfLabels = Double.valueOf(JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("NUMBER_OF_PLATES"))).intValue()
 def labelTemplate = LabelTemplates.SS2_LYSIS_BUFFER
 def labelData = [:]
+String generatedBarcodesTxt = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("GENERATED_BARCODES"))
+if (generatedBarcodesTxt) {
+    List<String> alreadyGeneratedBarcodes =
+            Arrays.asList(generatedBarcodesTxt.split(','))
 
-PrintLabelAction printLabelAction =
-        new PrintLabelAction(printerName, numberOfLabels, labelTemplate, labelData)
+    if (alreadyGeneratedBarcodes.size() > 0) {
+        labelData['barcodes'] = alreadyGeneratedBarcodes
+    }
+}
+
+LabelGenerator labelGenerator = new PlateLabelGenerator(printerName, numberOfLabels, labelTemplate, labelData, curIssue)
+labelGenerator.barcodeGenerator = new BarcodeGenerator()
+
+PrintLabelAction printLabelAction = new PrintLabelAction(labelGenerator)
 printLabelAction.execute()

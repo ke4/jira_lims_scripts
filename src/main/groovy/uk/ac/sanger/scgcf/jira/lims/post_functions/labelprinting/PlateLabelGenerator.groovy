@@ -1,9 +1,11 @@
 package uk.ac.sanger.scgcf.jira.lims.post_functions.labelprinting
 
+import com.atlassian.jira.issue.Issue
 import groovy.util.logging.Slf4j
 import uk.ac.sanger.scgcf.jira.lims.configurations.ConfigReader
 import uk.ac.sanger.scgcf.jira.lims.configurations.JiraLimsServices
 import uk.ac.sanger.scgcf.jira.lims.post_functions.labelprinting.templates.LabelJsonCreator
+import uk.ac.sanger.scgcf.jira.lims.service_wrappers.JiraAPIWrapper
 import uk.ac.sanger.scgcf.jira.lims.services.BarcodeGenerator
 
 /**
@@ -12,7 +14,7 @@ import uk.ac.sanger.scgcf.jira.lims.services.BarcodeGenerator
  * Created by ke4 on 15/03/2017.
  */
 @Slf4j(value="LOG")
-class PlateLabelGenerator {
+class PlateLabelGenerator implements LabelGenerator {
 
     String printerName
     int numberOfLabels
@@ -22,8 +24,8 @@ class PlateLabelGenerator {
     String barcodePrefix
     String barcodeInfo
     def labelData
-    List<String> barcodes = new ArrayList<>()
     BarcodeGenerator barcodeGenerator
+    Issue curIssue
 
     /**
      * Constructor for {@code PlateLabelGenerator}.
@@ -33,13 +35,12 @@ class PlateLabelGenerator {
      * @param labelTemplate the template to use to print the label(s)
      * @param labelData contains the data to print on the label
      */
-    PlateLabelGenerator(String printerName, int numberOfLabels, LabelTemplates labelTemplate, def labelData) {
+    PlateLabelGenerator(String printerName, int numberOfLabels, LabelTemplates labelTemplate, def labelData, Issue issue) {
         this.printerName = printerName
         this.numberOfLabels = numberOfLabels
         this.labelTemplate = labelTemplate
         this.labelData = labelData
-
-        barcodeGenerator = new BarcodeGenerator()
+        this.curIssue = issue
 
         initBarcodeProperties()
     }
@@ -53,9 +54,17 @@ class PlateLabelGenerator {
      * @return assembled JSON ready for printing with the selected label printer.
      */
     public def createLabel() {
-        generateBarcode()
+        List<String> alreadyGeneratedBarcodes = labelData['barcodes']
+        if (alreadyGeneratedBarcodes == null || alreadyGeneratedBarcodes.size() == 0) {
+            LOG.debug("Generating new barcodes...")
+            List<String> barcodes = generateBarcode()
+            labelData['barcodes'] = barcodes
+            JiraAPIWrapper.setCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("GENERATED_BARCODES"), barcodes.join(','))
+        }
 
-        labelData['barcodes'] = barcodes
+        String generated_barcodes = JiraAPIWrapper.getCustomFieldValueByName(curIssue, ConfigReader.getCustomFieldName("GENERATED_BARCODES"))
+
+        LOG.debug ("Generated barcodes: >>>> $generated_barcodes")
 
         LOG.debug("labelData: ${labelData.toString()}")
 
@@ -69,11 +78,11 @@ class PlateLabelGenerator {
         templateJson
     }
 
-    private void generateBarcode() {
+    private List<String> generateBarcode() {
         if (numberOfLabels == 1) {
-            barcodes.add(barcodeGenerator.generateSingleBarcode(barcodePrefix, barcodeInfo))
+            [ barcodeGenerator.generateSingleBarcode(barcodePrefix, barcodeInfo) ]
         } else {
-            barcodes.addAll(barcodeGenerator.generateBatchBarcodes(barcodePrefix, barcodeInfo, numberOfLabels))
+            barcodeGenerator.generateBatchBarcodes(barcodePrefix, barcodeInfo, numberOfLabels)
         }
     }
 
